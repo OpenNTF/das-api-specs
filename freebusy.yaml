@@ -1,0 +1,327 @@
+#
+# © Copyright IBM Corp. 2017
+# 
+# Licensed under the Apache License, Version 2.0 (the "License"); 
+# you may not use this file except in compliance with the License. 
+# You may obtain a copy of the License at:
+# 
+# http://www.apache.org/licenses/LICENSE-2.0 
+# 
+# Unless required by applicable law or agreed to in writing, software 
+# distributed under the License is distributed on an "AS IS" BASIS, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+# implied. See the License for the specific language governing 
+# permissions and limitations under the License.
+#
+
+swagger: '2.0'
+
+# Document metadata
+info:
+  title: IBM Domino Freebusy API
+  version: "9.0.1"
+  description: |
+   The freebusy API is used to:
+   - Get busy time for a given person or room.
+   - Get a list of available rooms for a given time.
+   - Get a list of sites in a directory.
+
+securityDefinitions:
+  basic:
+    type: basic
+
+security:
+  - basic: []
+  
+# Tags
+tags:
+- name: busytime
+  description: Get busy time
+- name: freerooms
+  description: Get a list of available rooms
+- name: sites
+  description: Get a list of sites
+  
+# Paths
+paths:
+  # Busy time resource
+  /api/freebusy/busytime:
+    # This is a HTTP operation
+    get:
+      tags:
+      - "busytime"
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Gets busy time for a given person or room.
+      # This is array of GET operation parameters:
+      parameters:
+        # An example parameter that is in query and is required
+        -
+          name: name
+          in: query
+          description: Name or email address of the person (or room).
+          required: true
+          type: string
+        -
+          name: format
+          in: query
+          description: |
+           The desired format of the response. If you omit this
+           parameter, the response is in JSON format. For iCalendar
+           format, specify `format=icalendar`.
+          required: false
+          type: string
+        -
+          name: since
+          in: query
+          description: |
+           The start date in UTC for the busy time data (for example, 
+           `since=2017-09-01T13:00:00Z`). If you omit this
+           parameter, the default start date is the time of the
+           request minus 30 minutes.
+          required: false
+          type: string
+        -
+          name: before
+          in: query
+          description: |
+           The end date in UTC for the busy time data (for example,
+           `before=2017-10-01T13:00:00Z`). If you omit both
+           the `before` and `days` parameters, the default end
+           date is 30 days after the start date.
+          required: false
+          type: string
+        -
+          name: days
+          in: query
+          description: |
+           The requested number of days of busy time data.
+           The `before` and `days` parameters are mutually
+           exclusive.
+          required: false
+          type: integer
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/busyTimeResponse'
+        400:
+          description: |
+           Bad request.  For example, the person or room specified by
+           the `name` parameter was not found.
+          schema:
+           $ref: '#/definitions/errorResponse'
+        
+  # Free rooms resource   
+  /api/freebusy/freerooms:
+    # This is a HTTP operation
+    get:
+      tags:
+      - "freerooms"
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Gets a list of available rooms for a given time.
+      # This is array of GET operation parameters:
+      parameters:
+        # An example parameter that is in query and is required
+        -
+          name: site
+          in: query
+          description: |
+           The site to search.  If the site includes spaces or other
+           special characters, it must be URL encoded.
+          required: true
+          type: string
+        -
+          name: start
+          in: query
+          description: |
+           The start date in UTC for the free rooms search 
+           (for example, `start=2017-09-01T13:00:00Z`).
+          required: true
+          type: string
+        -
+          name: end
+          in: query
+          description: |
+           The end date in UTC for the free rooms search 
+           (for example, `end=2017-09-01T14:00:00Z`).
+          required: true
+          type: string
+        -
+          name: capacity
+          in: query
+          description: |
+           The minimum required room capacity. If you omit
+           this parameter, the default capacity is 5.
+          required: false
+          type: integer
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/freeRoomsResponse'
+        400:
+          description: |
+           Bad request.  For example, a required parameter was not
+           included.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+  # Directories resource
+  /api/freebusy/directories:
+    # This is a HTTP operation
+    get:
+      tags:
+      - "sites"
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Gets a list of directories.
+      responses:
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/directoriesResponse'
+
+  # Sites resource
+  /api/freebusy/sites/{directory}:
+    # This is a HTTP operation
+    get:
+      tags:
+      - "sites"
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Gets a list of sites in a directory.
+      parameters:
+        -
+          name: directory
+          in: path
+          description: |
+           The directory.  You can get a list of directories
+           from the directories resource.
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/sitesResponse'
+
+# Object definitions
+definitions:
+  exDateTime:
+    type: object
+    properties:
+      date:
+        type: string
+      time:
+        type: string
+      utc:
+        type: boolean
+ 
+  exDateTimeRange:
+    type: object
+    properties:
+      start:
+        $ref: '#/definitions/exDateTime'
+      end:
+        $ref: '#/definitions/exDateTime'
+ 
+  room:
+    type: object
+    properties:
+      displayName:
+        type: string
+      distinguishedName:
+        type: string
+      email:
+        type: string
+      capacity:
+        type: integer
+        
+  site:
+    type: object
+    properties:
+      displayName:
+        type: string
+        
+  link:
+    type: object
+    properties:
+      rel:
+        type: string
+      href:
+        type: string
+        
+  directory:
+    type: object
+    properties:
+      links:
+        type: array
+        items:
+          $ref: '#/definitions/link'
+      displayName:
+        type: string
+        
+  busyTimeResponse:
+    type: object
+    properties:
+      start:
+        $ref: '#/definitions/exDateTime'
+      end:
+        $ref: '#/definitions/exDateTime'
+      busyTimes:
+        type: array
+        items:
+          $ref: '#/definitions/exDateTimeRange'
+
+  freeRoomsResponse:
+    type: object
+    properties:
+      rooms:
+        type: array
+        items:
+          $ref: '#/definitions/room'
+  
+  directoriesResponse:
+    type: object
+    properties:
+      directories:
+        type: array
+        items:
+          $ref: '#/definitions/directory'
+  
+  sitesResponse:
+    type: object
+    properties:
+      sites:
+        type: array
+        items:
+          $ref: '#/definitions/site'
+  
+  errorResponse:
+    type: object
+    properties:
+      code:
+        type: integer
+        description: HTTP status code.  For example, 400.
+      text:
+        type: string
+        description: HTTP status text.  For example, "Bad request".
+      message:
+        type: string
+        description: Request specific error message.  For example, "Name not found". 
+      data:
+        type: string
+        description: |
+          Error specific details.  When present, this may include
+          a server-side stack trace.
+      type:
+        type: string
+        description: |
+          When the type of the `data` property when present.
+          For example, "text".
