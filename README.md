@@ -34,7 +34,7 @@ For example:
 
 - Use [Swagger Codegen](https://github.com/swagger-api/swagger-codegen) to 
   generate client libraries for most popular languages and frameworks.
-  For detailed instructions on generating client code, see the
+  For detailed instructions, see the
   [Generating client code](https://github.com/OpenNTF/das-api-specs/wiki/Generating-client-code)
   article.
 
@@ -53,7 +53,7 @@ demonstrate how to use DAS APIs with Swagger generated client libraries.
 
 The samples are not intended to be full-featured applications.  Rather,
 the emphasis is on hands-on learning.  You can quickly customize each
-sample for your local Domino server, learn from working code, and gradually
+sample for your own Domino server, learn from working code, and gradually
 tackle your own application.
 
 To get started with the sample code, see the [DAS client samples](client-samples)
@@ -61,7 +61,14 @@ page.
 
 ## Contributions
 
-To be completed ...
+We hope you find this repository useful and encourage you contribute
+back when possible.  For example:
+
+  fix it, you can at least report the issue.
+  
+  a pull request and/or report the issue.
+  
+  write your own sample and create a pull request.
 
 ## References
 
