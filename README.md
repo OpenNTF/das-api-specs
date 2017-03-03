@@ -64,10 +64,15 @@ page.
 We hope you find this repository useful and encourage you contribute
 back when possible.  For example:
 
+- If you find a problem with one of the OpenAPI specifications,
+  fix it yourself and create a pull request.  Or if you can't
   fix it, you can at least report the issue.
   
+- If you find a problem with one of the client samples, create
   a pull request and/or report the issue.
   
+- Are you an expert in Android, C#, PHP or Ruby? If you don't find
+  a client sample for your favorite language or platform,
   write your own sample and create a pull request.
 
 ## References
