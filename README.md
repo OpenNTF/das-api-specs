@@ -24,12 +24,12 @@ APIs for:
 - Mail (see [the XPages extension library](http://extlib.openntf.org))
 
 This repository contains OpenAPI specifications for DAS APIs.
-Each API has a separate specification.  For example, for the freebusy API 
-specification, see [freebusy.yaml](freebusy.yaml).
+Each API has a separate specification.  For example, the freebusy API 
+specification is [freebusy.yaml](freebusy.yaml).
 
 ## Uses
 
-You can use these API specifications with a broad range of Swagger tools.
+You can use these OpenAPI specifications with a broad range of Swagger tools.
 For example:
 
 - Use [Swagger Codegen](https://github.com/swagger-api/swagger-codegen) to 
@@ -65,8 +65,7 @@ We hope you find this repository useful and encourage you contribute
 back when possible.  For example:
 
 - If you find a problem with one of the OpenAPI specifications,
-  fix it yourself and create a pull request.  Or if you can't
-  fix it, you can at least report the issue.
+  problem yourself and create a pull request.
   
 - If you find a problem with one of the client samples, create
   a pull request and/or report the issue.
