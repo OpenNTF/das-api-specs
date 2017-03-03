@@ -65,6 +65,7 @@ We hope you find this repository useful and encourage you contribute
 back when possible.  For example:
 
 - If you find a problem with one of the OpenAPI specifications,
+  report the issue.  If you are feeling ambitious, fix the
   problem yourself and create a pull request.
   
 - If you find a problem with one of the client samples, create
