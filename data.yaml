@@ -1,0 +1,379 @@
+#
+# © Copyright IBM Corp. 2017
+# 
+# Licensed under the Apache License, Version 2.0 (the "License"); 
+# you may not use this file except in compliance with the License. 
+# You may obtain a copy of the License at:
+# 
+# http://www.apache.org/licenses/LICENSE-2.0 
+# 
+# Unless required by applicable law or agreed to in writing, software 
+# distributed under the License is distributed on an "AS IS" BASIS, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+# implied. See the License for the specific language governing 
+# permissions and limitations under the License.
+#
+
+swagger: '2.0'
+
+info:
+  version: 9.0.1
+  title: IBM Domino Data API
+  description: |
+    The data API provides access to any database for which it is enabled.
+    The API represents databases, views, view entries, and documents in
+    JSON format.
+
+    **NOTE:** This is a *preliminary* version of the data API specification
+    (**data.yaml**).  Documentation and code generated from this API
+    specification is also *preliminary*. 
+
+securityDefinitions:
+  basic:
+    type: basic
+
+security:
+  - basic: []
+  
+# Tags
+tags:
+  - name: database list
+    description: Read a list of databases.
+  - name: view list
+    description: Read a list of views and folders.
+  - name: view entry list
+    description: Read a list of view entries.
+  - name: document
+    description: Create, read, update or delete a document.
+
+paths:
+  /api/data:
+    get:
+      description: |
+        Gets a list of databases.
+      tags: ['database list']
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/databaseListResponse'
+
+  /{folder}/{database}/api/data/collections:
+    get:
+      description: |
+        Gets a list of databases.
+      tags: ['view list']
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/viewListResponse'
+
+  /{folder}/{database}/api/data/collections/name/{viewName}:
+    get:
+      description: |
+        Gets a list of view entries by view name.
+      tags: ['view entry list']
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/viewNameParam'
+        - $ref: '#/parameters/startParam'
+        - $ref: '#/parameters/countParam'
+        - $ref: '#/parameters/pageParam'
+        - $ref: '#/parameters/psParam'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/viewEntryListResponse'
+
+  /{folder}/{database}/api/data/collections/unid/{viewUnid}:
+    get:
+      description: |
+        Gets a list of view entries by view UNID.
+      tags: ['view entry list']
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/viewUnidParam'
+        - $ref: '#/parameters/startParam'
+        - $ref: '#/parameters/countParam'
+        - $ref: '#/parameters/pageParam'
+        - $ref: '#/parameters/psParam'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/viewEntryListResponse'
+
+  /{folder}/{database}/api/data/documents:
+    post:
+      description: |
+        Gets a list of databases.
+      tags: ['document']
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/formParam'
+        - $ref: '#/parameters/computeParam'
+        -
+          name: document
+          in: body
+          description: The document to create.
+          required: true
+          schema:
+            $ref: '#/definitions/document'
+      responses:
+        '201':
+          description: Successful response
+
+  /{folder}/{database}/api/data/documents/unid/{docUnid}:
+    get:
+      description: |
+        Reads a document.
+      tags: ['document']
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/docUnidParam'
+        - $ref: '#/parameters/hiddenParam'
+        - $ref: '#/parameters/multipartParam'
+        - $ref: '#/parameters/strongtypeParam'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/document'
+
+    delete:
+      description: |
+        Deletes a document.
+      tags: ['document']
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/docUnidParam'
+      responses:
+        '200':
+          description: Successful response
+
+# Object definitions
+definitions:
+  database:
+    type: object
+    properties:
+      '@title':
+        description: Title of the database.
+        type: string
+      '@filepath':
+        description: File path of the database relative to the Domino data directory.
+        type: string
+      '@replicaid':
+        description: Replica ID of the database.
+        type: string
+      '@template':
+        description: |
+          File name of the design template of the database, or an empty
+          string if the database does not have a design template.
+        type: string
+      '@href':
+        description: The URL of the view list resource for the database.
+        type: string
+
+  databaseListResponse:
+    type: array
+    items:
+      $ref: '#/definitions/database'
+
+  view:
+    type: object
+    properties:
+      '@title':
+        description: Title of the view or folder.
+        type: string
+      '@folder':
+        description: |
+          `false` for a view, `true` for a folder.
+        type: boolean
+      '@private':
+        description: |
+          `false` for shared, `true` for private.
+        type: boolean
+      '@modified':
+        description: |
+          Last modification date and time for the view or folder.
+        type: string
+      '@unid':
+        description: Universal ID of the view or folder.
+        type: string
+      '@href':
+        description: The URL of the corresponding view entry list resource.
+        type: string
+
+  viewListResponse:
+    type: array
+    items:
+      $ref: '#/definitions/view'
+
+  viewEntry:
+    type: object
+    properties:
+      '@entryid':
+        description: |
+          Position of the entry in the view or folder and the universal
+          ID of any associated document.
+        type: string
+      '@noteid':
+        description: |
+          The note ID of the document associated with the entry, or an
+          empty string if the entry is a category or total (systemcolumns
+          bit 0x0001).
+        type: string
+      '@unid':
+        description: |
+          The universal ID of the document associated with the entry, 
+          or an empty string if the entry is a category or total
+          (systemcolumns bit 0x0002).
+        type: string
+      '@position':
+        description: |
+          Position of the entry in the view or folder (systemcolumns
+          bit 0x0004).
+        type: string
+    additionalProperties:
+      type: object
+
+  viewEntryListResponse:
+    type: array
+    items:
+      $ref: '#/definitions/viewEntry'
+
+  document:
+    type: object
+    additionalProperties:
+      type: object
+
+# Common parameters
+parameters:
+  folderParam:
+    name: folder
+    in: path
+    description: |
+      Database folder name relative to the Domino data directory.  If
+      the database is not in a folder, use `.` to specify the data
+      directory itself.
+    type: string
+    required: true
+
+  databaseParam:
+    name: database
+    in: path
+    description: Database file name.
+    type: string
+    required: true
+
+  viewNameParam:
+    name: viewName
+    in: path
+    description: Name of a view or folder in the database.
+    type: string
+    required: true
+
+  viewUnidParam:
+    name: viewUnid
+    in: path
+    description: Universal ID of a view or folder in the database.
+    type: string
+    required: true
+
+  startParam:
+    name: start
+    in: query
+    description: |
+      Specifies the starting entry. Defaults to 0 (the first entry).
+    type: integer
+    required: false
+
+  countParam:
+    name: count
+    in: query
+    description: |
+      Specifies the number of entries to return. Defaults to 10.
+      Note: Use `start` and `count` together, or use `ps` and 
+      `page` together.
+    type: integer
+    required: false
+
+  pageParam:
+    name: page
+    in: query
+    description: |
+      Page number. The API returns entries based on a multiple of
+      this parameter and the page size parameter (`ps`).
+    type: integer
+    required: false
+
+  psParam:
+    name: ps
+    in: query
+    description: |
+      Page size or the number of entries to return.
+    type: integer
+    required: false
+
+  docUnidParam:
+    name: docUnid
+    in: path
+    description: Universal ID of the document.
+    type: string
+    required: true
+
+  formParam:
+    name: form
+    in: query
+    description: |
+      Associates a database form with the document.
+    type: string
+    required: false
+
+  computeParam:
+    name: computewithform
+    in: query
+    description: |
+      When `true`, runs the associated form formulas against the request
+      data before posting the data. You must identify the form.
+    type: boolean
+    required: false
+
+  hiddenParam:
+    name: hidden
+    in: query
+    description: |
+      When `true`, emits hidden properties.  Hidden properties have names
+      beginning with `$`, for example, `"$UpdatedBy":"CN=Admin/O=Your Org"`.
+    type: boolean
+    required: false
+
+  multipartParam:
+    name: multipart
+    in: query
+    description: |
+      When `false`, formats rich text as a single HTML part rather than
+      multipart. The default value is `true`.
+    type: boolean
+    required: false
+
+  strongtypeParam:
+    name: strongtype
+    in: query
+    description: |
+      When `true`, displays date-time items as objects with type and data
+      elements. See the examples. Rich text items always use strongtype
+      format.
+    type: boolean
+    required: false
+
