@@ -41,6 +41,8 @@ tags:
     description: Read a list of databases.
   - name: view list
     description: Read a list of views and folders.
+  - name: view design
+    description: Read the design of a view or folder.
   - name: view entry list
     description: Read a list of view entries.
   - name: document
@@ -61,7 +63,7 @@ paths:
   /{folder}/{database}/api/data/collections:
     get:
       description: |
-        Gets a list of databases.
+        Gets a list of views and folders in a database.
       tags: ['view list']
       parameters:
         - $ref: '#/parameters/folderParam'
@@ -71,6 +73,40 @@ paths:
           description: Successful response
           schema:
             $ref: '#/definitions/viewListResponse'
+
+  /{folder}/{database}/api/data/collections/name/{viewName}/design:
+    get:
+      description: |
+        Gets information on the columns in a view or folder.
+      tags: ['view design']
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/viewNameParam'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/viewDesignResponse'
+        '404':
+          description: The specified view wasn't found.
+
+  /{folder}/{database}/api/data/collections/unid/{viewUnid}/design:
+    get:
+      description: |
+        Gets information on the columns in a view or folder.
+      tags: ['view design']
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/viewUnidParam'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/viewDesignResponse'
+        '404':
+          description: The specified view wasn't found.
 
   /{folder}/{database}/api/data/collections/name/{viewName}:
     get:
@@ -90,6 +126,8 @@ paths:
           description: Successful response
           schema:
             $ref: '#/definitions/viewEntryListResponse'
+        '404':
+          description: The specified view wasn't found.
 
   /{folder}/{database}/api/data/collections/unid/{viewUnid}:
     get:
@@ -109,17 +147,20 @@ paths:
           description: Successful response
           schema:
             $ref: '#/definitions/viewEntryListResponse'
+        '404':
+          description: The specified view wasn't found.
 
   /{folder}/{database}/api/data/documents:
     post:
       description: |
-        Gets a list of databases.
+        Creates a new document.
       tags: ['document']
       parameters:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
         - $ref: '#/parameters/formParam'
         - $ref: '#/parameters/computeParam'
+        - $ref: '#/parameters/parentidParam'
         -
           name: document
           in: body
@@ -130,6 +171,14 @@ paths:
       responses:
         '201':
           description: Successful response
+          headers:
+            Location:
+              description: The URL of the new document
+              type: string
+        '400':
+          description: |
+            Bad request. For example, the server couldn't parse
+            the JSON input.
 
   /{folder}/{database}/api/data/documents/unid/{docUnid}:
     get:
@@ -143,11 +192,90 @@ paths:
         - $ref: '#/parameters/hiddenParam'
         - $ref: '#/parameters/multipartParam'
         - $ref: '#/parameters/strongtypeParam'
+        - $ref: '#/parameters/ifModifiedSinceParam'
       responses:
         '200':
           description: Successful response
           schema:
             $ref: '#/definitions/document'
+          headers:
+            Last-Modified:
+              description: |
+                Date and time in RFC 1123 format when this document
+                was last modified.
+              type: string
+        '304':
+          description: |
+            The document hasn't been modified since the date in the
+            request's `If-Modified-Since` header.
+        '404':
+          description: The specified document wasn't found.
+
+    patch:
+      description: |
+        Updates selected items in a document.
+      tags: ['document']
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/docUnidParam'
+        - $ref: '#/parameters/formParam'
+        - $ref: '#/parameters/computeParam'
+        - $ref: '#/parameters/ifUnmodifiedSinceParam'
+        -
+          name: document
+          in: body
+          description: The document properties to update.
+          required: true
+          schema:
+            $ref: '#/definitions/document'
+      responses:
+        '200':
+          description: Successful response
+        '400':
+          description: |
+            Bad request. For example, the server couldn't parse
+            the JSON input.
+        '404':
+          description: The specified document wasn't found.
+        '412':
+          description: |
+            Precondition failed. This status code is returned only if 
+            the `If-Unmodified-Since` header is included in the request and
+            the document has been modified since the specified date.
+
+    put:
+      description: |
+        Replaces all items in a document.
+      tags: ['document']
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/docUnidParam'
+        - $ref: '#/parameters/formParam'
+        - $ref: '#/parameters/computeParam'
+        - $ref: '#/parameters/ifUnmodifiedSinceParam'
+        -
+          name: document
+          in: body
+          description: The document properties to update.
+          required: true
+          schema:
+            $ref: '#/definitions/document'
+      responses:
+        '200':
+          description: Successful response
+        '400':
+          description: |
+            Bad request. For example, the server couldn't parse
+            the JSON input.
+        '404':
+          description: The specified document wasn't found.
+        '412':
+          description: |
+            Precondition failed. This status code is returned only if 
+            the `If-Unmodified-Since` header is included in the request and
+            the document has been modified since the specified date.
 
     delete:
       description: |
@@ -157,9 +285,16 @@ paths:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
         - $ref: '#/parameters/docUnidParam'
+        - $ref: '#/parameters/ifUnmodifiedSinceParam'
       responses:
         '200':
           description: Successful response
+        '404':
+          description: The specified document wasn't found.
+        '412':
+          description: |
+            The document has been modified since the date specified by
+            the `If-Unmodified-Since` header.
 
 # Object definitions
 definitions:
@@ -256,6 +391,55 @@ definitions:
     type: object
     additionalProperties:
       type: object
+      
+  viewColumnDesign:
+    type: object
+    properties:
+      '@columnnumber':
+        description: |
+          Position of the column in the view or folder, where 1 is the first column.
+        type: integer
+      '@name':
+        description: |
+          The name of the column.
+        type: string
+      '@title':
+        description: |
+          The title of the column.
+        type: string
+      '@width':
+        description: |
+          The width of the column.
+        type: integer
+      '@alignment':
+        description: |
+          The alignment of the column.
+        type: integer
+      '@hidden':
+        description: |
+          `true` if the column is hidden.
+        type: boolean
+      '@response':
+        description: |
+          `true` if the column is for responses.
+        type: boolean
+      '@twistie':
+        description: |
+          `true` if the column is a twistie.
+        type: boolean
+      '@field':
+        description: |
+          `true` if the column is a field.
+        type: boolean
+      '@category':
+        description: |
+          `true` if the column is a category.
+        type: boolean
+
+  viewDesignResponse:
+    type: array
+    items:
+      $ref: '#/definitions/viewColumnDesign'
 
 # Common parameters
 parameters:
@@ -377,3 +561,35 @@ parameters:
     type: boolean
     required: false
 
+  ifUnmodifiedSinceParam:
+    name: If-Unmodified-Since
+    in: header
+    description: |
+      Date and time in RFC 1123 time format (for example, 
+      `Tue, 23 Aug 2011 21:35:18 GMT`) as previously returned in the 
+      `Last-Modified` response header of a GET for the same document.
+      The operation succeeds only if the document has not been modified
+      since the specified date.
+    type: string
+    required: false
+
+  ifModifiedSinceParam:
+    name: If-Modified-Since
+    in: header
+    description: |
+      Date and time in RFC 1123 time format (for example, 
+      `Tue, 23 Aug 2011 21:35:18 GMT`) as previously returned in the 
+      `Last-Modified` response header of a GET for the same document.
+      The operation succeeds only if the document has been modified
+      since the specified date.
+    type: string
+    required: false
+
+  parentidParam:
+    name: parentid
+    in: query
+    description: |
+      Adds the document as a response to the document specified by
+      the parent UNID.
+    type: string
+    required: false

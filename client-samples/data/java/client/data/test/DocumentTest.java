@@ -106,7 +106,12 @@ public class DocumentTest {
         // Verify results and delete the document
         
         if ( unid != null ) {
+            
+            // Read the document
+            
             document = test.readDocument(folder, database, unid);
+
+            // Verify the results
 
             if ( !(document.get(FIELD_TEXT) instanceof String) ) {
                 System.err.println(FIELD_TEXT + " property is missing or is not a string.");
@@ -127,7 +132,23 @@ public class DocumentTest {
                 System.err.println(FIELD_DATETIME + " property is missing or has unexpected format");
             }
             
+            // Remove the number field
+            
+            document.remove(FIELD_NUMBER);
+            
+            // Update the document
+            
+            test.updateDocument(folder, database, unid, document, formName);
+
+            // Read it again to verify the field has been removed
+
+            document = test.readDocument(folder, database, unid);
+            if ( document.get(FIELD_NUMBER) != null ) {
+                System.err.println(FIELD_NUMBER + " exists. It should have been removed by the update.");
+            }
+            
             // Delete the document
+            
             test.deleteDocument(folder, database, unid);
         }
     }
@@ -148,7 +169,7 @@ public class DocumentTest {
             System.out.println("Creating a new document ...");
             ApiResponse<Void> result = _api.folderDatabaseApiDataDocumentsPostWithHttpInfo(
                                                 folder, database, document, 
-                                                form, true); 
+                                                form, true, null); 
             
             // Extract the Location header
             String location = null;
@@ -196,7 +217,7 @@ public class DocumentTest {
     }
 
     /**
-     * Deletes a document.
+     * Reads a document.
      * 
      * @param folder
      * @param database
@@ -208,7 +229,7 @@ public class DocumentTest {
         try {
             System.out.println("Reading document " + unid + "...");
             document = _api.folderDatabaseApiDataDocumentsUnidDocUnidGet(folder, database, unid,
-                                false, false, true);
+                                false, false, true, null);
             
             if ( document != null ) {
                 System.out.println("Read document request succeeded");
@@ -235,6 +256,37 @@ public class DocumentTest {
     }
     
     /**
+     * Updates a document.
+     * 
+     * @param folder
+     * @param database
+     * @param unid
+     */
+    public Document updateDocument(String folder, String database, String unid, Document document, String form) {
+        
+        try {
+            System.out.println("Updating document " + unid + "...");
+            _api.folderDatabaseApiDataDocumentsUnidDocUnidPut(folder, database, unid,
+                                document, form, false, null);
+            
+            System.out.println("Update document request succeeded\n");
+        }
+        catch (ApiException e) {
+            System.err.println("Exception when calling DocumentApi#folderDatabaseApiDataDocumentsUnidDocUnidPut");
+            String body = e.getResponseBody();
+            if (body != null) {
+                System.err.println("Response from server ...");
+                System.err.println(body);
+            }
+            else {
+                e.printStackTrace();
+            }
+        }
+        
+        return document;
+    }
+    
+    /**
      * Deletes a document.
      * 
      * @param folder
@@ -244,7 +296,7 @@ public class DocumentTest {
     public void deleteDocument(String folder, String database, String unid) {
         try {
             System.out.println("Deleting document " + unid + "...");
-            _api.folderDatabaseApiDataDocumentsUnidDocUnidDelete(folder, database, unid);
+            _api.folderDatabaseApiDataDocumentsUnidDocUnidDelete(folder, database, unid, null);
             
         }
         catch (ApiException e) {
