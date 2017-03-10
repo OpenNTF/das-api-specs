@@ -24,10 +24,6 @@ info:
     The API represents databases, views, view entries, and documents in
     JSON format.
 
-    **NOTE:** This is a *preliminary* version of the data API specification
-    (**data.yaml**).  Documentation and code generated from this API
-    specification is also *preliminary*. 
-
 securityDefinitions:
   basic:
     type: basic
@@ -40,13 +36,17 @@ tags:
   - name: database list
     description: Read a list of databases.
   - name: view list
-    description: Read a list of views and folders.
+    description: Read a list of views and folders in a database.
   - name: view design
     description: Read the design of a view or folder.
   - name: view entry list
-    description: Read a list of view entries.
+    description: Read a list of view or folder entries.
+  - name: folder
+    description: Update the contents of a folder.
   - name: document
     description: Create, read, update or delete a document.
+  - name: document list
+    description: Read a list of documents in a database.
 
 paths:
   /api/data:
@@ -121,13 +121,53 @@ paths:
         - $ref: '#/parameters/countParam'
         - $ref: '#/parameters/pageParam'
         - $ref: '#/parameters/psParam'
+        - $ref: '#/parameters/entrycountParam'
+        - $ref: '#/parameters/searchParam'
+        - $ref: '#/parameters/searchmaxdocsParam'
+        - $ref: '#/parameters/sortcolumnParam'
+        - $ref: '#/parameters/sortorderParam'
+        - $ref: '#/parameters/startkeysParam'
+        - $ref: '#/parameters/keysParam'
+        - $ref: '#/parameters/keysexactmatchParam'
+        - $ref: '#/parameters/expandlevelParam'
+        - $ref: '#/parameters/categoryParam'
+        - $ref: '#/parameters/parentidParam'
       responses:
         '200':
           description: Successful response
           schema:
             $ref: '#/definitions/viewEntryListResponse'
+          headers:
+            Content-Range:
+              description: |
+                Range and number of items in the response. For example, 
+                `items 0-9/29`
+              type: string
         '404':
           description: The specified view wasn't found.
+
+    put:
+      description: |
+        Updates the contents of a folder by folder name.
+      tags: ['folder']
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/folderNameParam'
+        -
+          name: operations
+          in: body
+          description: Documents to be added and/or removed.
+          required: true
+          schema:
+            $ref: '#/definitions/folderOperations'
+      responses:
+        '200':
+          description: Successful response
+        '400':
+          description: |
+            Bad request.  For example, the server was unable to parse
+            the JSON input.
 
   /{folder}/{database}/api/data/collections/unid/{viewUnid}:
     get:
@@ -142,13 +182,53 @@ paths:
         - $ref: '#/parameters/countParam'
         - $ref: '#/parameters/pageParam'
         - $ref: '#/parameters/psParam'
+        - $ref: '#/parameters/entrycountParam'
+        - $ref: '#/parameters/searchParam'
+        - $ref: '#/parameters/searchmaxdocsParam'
+        - $ref: '#/parameters/sortcolumnParam'
+        - $ref: '#/parameters/sortorderParam'
+        - $ref: '#/parameters/startkeysParam'
+        - $ref: '#/parameters/keysParam'
+        - $ref: '#/parameters/keysexactmatchParam'
+        - $ref: '#/parameters/expandlevelParam'
+        - $ref: '#/parameters/categoryParam'
+        - $ref: '#/parameters/parentidParam'
       responses:
         '200':
           description: Successful response
           schema:
             $ref: '#/definitions/viewEntryListResponse'
+          headers:
+            Content-Range:
+              description: |
+                Range and number of items in the response. For example, 
+                `items 0-9/29`
+              type: string
         '404':
           description: The specified view wasn't found.
+
+    put:
+      description: |
+        Updates the contents of a folder by folder UNID.
+      tags: ['folder']
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/folderUnidParam'
+        -
+          name: operations
+          in: body
+          description: Documents to be added and/or removed.
+          required: true
+          schema:
+            $ref: '#/definitions/folderOperations'
+      responses:
+        '200':
+          description: Successful response
+        '400':
+          description: |
+            Bad request.  For example, the server was unable to parse
+            the JSON input.
 
   /{folder}/{database}/api/data/documents:
     post:
@@ -160,7 +240,7 @@ paths:
         - $ref: '#/parameters/databaseParam'
         - $ref: '#/parameters/formParam'
         - $ref: '#/parameters/computeParam'
-        - $ref: '#/parameters/parentidParam'
+        - $ref: '#/parameters/responseParentidParam'
         -
           name: document
           in: body
@@ -179,6 +259,25 @@ paths:
           description: |
             Bad request. For example, the server couldn't parse
             the JSON input.
+
+    get:
+      description: |
+        Gets a list of documents. If you don't specify any query 
+        parameters, the response includes all the documents in the database.
+        To limit the number of documents returned, use the optional 
+        `since` or `search` parameters.
+      tags: ['document list']
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/searchParam'
+        - $ref: '#/parameters/searchmaxdocsParam'
+        - $ref: '#/parameters/sinceParam'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/documentListResponse'
 
   /{folder}/{database}/api/data/documents/unid/{docUnid}:
     get:
@@ -298,6 +397,16 @@ paths:
 
 # Object definitions
 definitions:
+  link:
+    type: object
+    properties:
+      rel:
+        type: string
+        description: Relationship to this resource.
+      href:
+        type: string
+        description: URL to linked resource.
+        
   database:
     type: object
     properties:
@@ -379,6 +488,46 @@ definitions:
           Position of the entry in the view or folder (systemcolumns
           bit 0x0004).
         type: string
+      '@read':
+        description: |
+          `true` if the entry is marked read for the user (systemcolumns
+          bit 0x0008).
+        type: boolean
+      '@siblings':
+        description: |
+          The number of siblings of the entry (systemcolumns bit 0x0010).
+        type: integer
+      '@descendants':
+        description: |
+          The number of descendants of the entry (systemcolumns bit 0x0020).
+        type: integer
+      '@children':
+        description: |
+          The number of children of the entry (systemcolumns bit 0x0040).
+        type: integer
+      '@indent':
+        description: |
+          The indent level of the entry (systemcolumns bit 0x0080).
+        type: integer
+      '@form':
+        description: |
+          The form upon which the document is based (systemcolumns
+          bit 0x0100).
+        type: string
+      '@category':
+        description: |
+          `true` if the entry is a category (systemcolumns bit 0x0200).
+        type: boolean
+      '@response':
+        description: |
+          `true` if the entry is a response (systemcolumns bit 0x0400).
+        type: boolean
+      '@href':
+        description: |
+          URL for the entry (systemcolumns bit 0x0800).
+        type: string
+      '@link':
+        $ref: '#/definitions/link'
     additionalProperties:
       type: object
 
@@ -389,6 +538,25 @@ definitions:
 
   document:
     type: object
+    properties:
+      '@created':
+        type: string
+        description: The date the document was created.
+      '@modified':
+        type: string
+        description: The last modification date of the document.
+      '@unid':
+        type: string
+        description: The universal ID of the document.
+      '@noteid':
+        type: string
+        description: The note ID of the document.
+      '@href':
+        type: string
+        description: The URL of the Document resource.
+      '@form':
+        type: string
+        description: The name of the form used to create the document.
     additionalProperties:
       type: object
       
@@ -441,6 +609,38 @@ definitions:
     items:
       $ref: '#/definitions/viewColumnDesign'
 
+  folderOperations:
+    type: object
+    properties:
+      add:
+        type: array
+        description: Array of UNIDs of documents to add to the folder.
+        items:
+          type: string
+      remove:
+        type: array
+        description: Array of UNIDs of documents to remove from the folder.
+        items:
+          type: string
+          
+  documentListEntry:
+    type: object
+    properties:
+      '@modified':
+        type: string
+        description: The last modification date of the document.
+      '@unid':
+        type: string
+        description: The universal ID of the document.
+      '@href':
+        type: string
+        description: The URL of the Document resource.
+        
+  documentListResponse:
+    type: array
+    items:
+      $ref: '#/definitions/documentListEntry'
+      
 # Common parameters
 parameters:
   folderParam:
@@ -471,6 +671,20 @@ parameters:
     name: viewUnid
     in: path
     description: Universal ID of a view or folder in the database.
+    type: string
+    required: true
+
+  folderNameParam:
+    name: viewName
+    in: path
+    description: Name of a folder in the database.
+    type: string
+    required: true
+
+  folderUnidParam:
+    name: viewUnid
+    in: path
+    description: Universal ID of a folder in the database.
     type: string
     required: true
 
@@ -507,6 +721,108 @@ parameters:
     description: |
       Page size or the number of entries to return.
     type: integer
+    required: false
+
+  entrycountParam:
+    name: entrycount
+    in: query
+    description: |
+      When `false`, disable the output of the `Content-Range` header
+      as a performance optimization. The default value is `true`.
+    type: boolean
+    required: false
+
+  searchParam:
+    name: search
+    in: query
+    description: |
+      Returns only documents that match a full-text query. An error
+      occurs if the database is not full-text indexed.
+    type: string
+    required: false
+
+  searchmaxdocsParam:
+    name: searchmaxdocs
+    in: query
+    description: |
+      Limits the number of documents returned by a full-text search.
+    type: integer
+    required: false
+
+  sortcolumnParam:
+    name: sortcolumn
+    in: query
+    description: |
+      Returns entries sorted on a column. If the column is not sorted
+      by design or does not exist, this parameter has no effect.
+    type: string
+    required: false
+
+  sortorderParam:
+    name: sortorder
+    in: query
+    description: |
+      Specifies the sort order. The parameter value should be either
+      `ascending` or `descending`. Pair this parameter with `sortcolumn`.
+    type: string
+    enum: 
+      - ascending
+      - descending
+    required: false
+
+  startkeysParam:
+    name: startkeys
+    in: query
+    description: |
+      Returns sorted entries starting at a specified entry. Pair this
+      parameter with sortcolumn. Example:
+      `?sortcolumn=Title&sortorder=ascending&startkeys=Document0020`
+    type: string
+    required: false
+
+  keysParam:
+    name: keys
+    in: query
+    description: |
+      Returns entries whose initial characters match keys. Pair this
+      parameter with sortcolumn. Example:
+      `?sortcolumn=Title&sortorder=ascending&keys=Document001`
+    type: string
+    required: false
+
+  keysexactmatchParam:
+    name: keysexactmatch
+    in: query
+    description: |
+      Returns entries that match keys exactly. Pair this parameter
+      with keys. Example:
+      `?sortcolumn=Title&sortorder=ascending&keys=Document001&keysexactmatch=true`
+    type: boolean
+    required: false
+
+  expandlevelParam:
+    name: expandlevel
+    in: query
+    description: |
+      Returns only entries at a specified indent level or higher.
+    type: integer
+    required: false
+
+  categoryParam:
+    name: category
+    in: query
+    description: |
+      Returns only entries in a specified category.
+    type: string
+    required: false
+
+  parentidParam:
+    name: parentid
+    in: query
+    description: |
+      Returns only entries that are descendants of the specified entry
+      UNID. Example: `?parentid=9B8F4A02A5F5254E852578950064EC03`
+    type: string
     required: false
 
   docUnidParam:
@@ -585,11 +901,20 @@ parameters:
     type: string
     required: false
 
-  parentidParam:
+  responseParentidParam:
     name: parentid
     in: query
     description: |
       Adds the document as a response to the document specified by
       the parent UNID.
+    type: string
+    required: false
+    
+  sinceParam:
+    name: since
+    in: query
+    description: |
+      Returns only documents modified since a specified time. Specify
+      the time in ISO 8601 format.  For example, `2011-08-21T20:21:00Z`.
     type: string
     required: false

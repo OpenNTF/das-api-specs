@@ -18,23 +18,29 @@ package client.data.test;
 
 import io.swagger.client.ApiClient;
 import io.swagger.client.ApiException;
+import io.swagger.client.api.FolderApi;
 import io.swagger.client.api.ViewEntryListApi;
+import io.swagger.client.model.FolderOperations;
 import io.swagger.client.model.ViewEntry;
 import io.swagger.client.model.ViewEntryListResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ViewEntryListTest {
     
-    private ViewEntryListApi _api = null;
+    private ViewEntryListApi _viewEntryApi = null;
+    private FolderApi _folderApi = null;
     
     public ViewEntryListTest(String basePath, String user, String password) {
         
-        _api = new ViewEntryListApi();
-        ApiClient client = _api.getApiClient();
+        _viewEntryApi = new ViewEntryListApi();
+        ApiClient client = _viewEntryApi.getApiClient();
         client.setBasePath(basePath);
         client.setUsername(user);
         client.setPassword(password);
+        
+        _folderApi = new FolderApi();
     }
     
     public static void main(String[] args) {
@@ -69,9 +75,42 @@ public class ViewEntryListTest {
         String folder = ".";
         String database = "XPagesExt.nsf";
         String viewName = "AllTypes";
+ 
+        // Parse command line
+        
+        String folderName = null;
+        for ( int i = 0; i < args.length ; i++ ) {
+            String arg = args[i];
+            if ( "-f".equals(arg) && (i+1) < args.length ) {
+                folderName = args[i+1];
+                break;
+            }
                 
+        }
+        
+        // Read a list of view entries and dump them to the console
+        
         ViewEntryListTest test = new ViewEntryListTest(basePath, username, password);
-        test.readViewEntryList(folder, database, viewName);
+        ViewEntryListResponse result = test.readViewEntryList(folder, database, viewName);
+        
+        // Optionally test folder operations.
+        
+        if ( result != null && result.size() > 0 && folderName != null ) {
+            List<String> unids = new ArrayList<String>();
+            for ( ViewEntry entry : result ) {
+                String unid = entry.getUnid();
+                if ( unid == null ) {
+                    unid = (String)entry.get("@unid");
+                }
+                unids.add(unid);
+            }
+            
+            // Add documents to the folder
+            test.updateFolder(folder, database, folderName, unids, false);
+            
+            // Now remove the same documents from the folder
+            test.updateFolder(folder, database, folderName, unids, true);
+        }
     }
     
     /**
@@ -81,13 +120,17 @@ public class ViewEntryListTest {
      * @param database
      * @param view
      */
-    public void readViewEntryList(String folder, String database, String view) {
+    public ViewEntryListResponse readViewEntryList(String folder, String database, String view) {
+        ViewEntryListResponse result = null;
         
         try {
             System.out.println("Requesting a list of view entries ...");
-            ViewEntryListResponse result = _api.folderDatabaseApiDataCollectionsNameViewNameGet(
+            result = _viewEntryApi.folderDatabaseApiDataCollectionsNameViewNameGet(
                                                 folder, database, view, 
-                                                null, null, null, null);
+                                                null, null, null, null,
+                                                null, null, null, null,
+                                                null, null, null, null,
+                                                null, null, null);
             
             if ( result.size() > 0 ) {
                 System.out.println("Request succeeded. An excerpt from the response follows ...\n");
@@ -98,6 +141,13 @@ public class ViewEntryListTest {
                     
                     ViewEntry entry = result.get(i);
                     System.out.println("Entry " + i);
+                    
+                    // Read some of the fixed properties.
+                    //
+                    // NOTE: getEntryid(), getNoteid(), etc. may return null
+                    // because of a Swagger Codegen bug.  In the following
+                    // code we work around the bug by getting the corresponding
+                    // properties from the HashMap interface.
                     
                     String entryId = entry.getEntryid();
                     if ( entryId == null ) {
@@ -116,6 +166,10 @@ public class ViewEntryListTest {
                         unid = (String)entry.get("@unid");
                     }
                     System.out.println("   unid: " + unid);
+
+                    // Read some dynamic properties.  The property names will
+                    // vary depending on the database design.  The following
+                    // properties are from XPagesExt.nsf.
                     
                     String fldText = null;
                     if ( entry.get("fldText") instanceof String ) {
@@ -153,5 +207,53 @@ public class ViewEntryListTest {
                 e.printStackTrace();
             }
         }
+        
+        return result;
+    }
+
+    /**
+     * Adds or removes documents to/from a folder.
+     * 
+     * @param folder
+     * @param database
+     * @param folderName
+     * @param unids
+     * @param remove
+     * @return
+     */
+    public boolean updateFolder(String folder, String database, String folderName, 
+                        List<String> unids, boolean remove) {
+        boolean result = true;
+        
+        try {
+            FolderOperations operations = new FolderOperations();
+            if ( remove ) {
+                System.out.println("Sending folder update request.  Removing documents from " + folderName + " ...");
+                operations.remove(unids);
+            }
+            else {
+                System.out.println("Sending folder update request.  Adding documents to " + folderName + " ...");
+                operations.add(unids);
+            }
+                
+            _folderApi.folderDatabaseApiDataCollectionsNameViewNamePut(
+                                                folder, database, folderName, operations); 
+            
+            System.out.println("Request succeeded.\n");
+
+        }
+        catch (ApiException e) {
+            System.err.println("Exception when calling FolderApi#folderDatabaseApiDataCollectionsNameViewNamePut");
+            String body = e.getResponseBody();
+            if (body != null) {
+                System.err.println("Response from server ...");
+                System.err.println(body);
+            }
+            else {
+                e.printStackTrace();
+            }
+        }
+        
+        return result;
     }
 }
