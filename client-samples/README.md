@@ -23,8 +23,11 @@ These samples demonstrate how to use the Domino calendar API.  They
 require client code generated from **calendar.yaml**.  See the detailed
 instructions for:
 
-- [Java](calendar/java)
-- [Node.js](calendar/nodejs)
+- [Java samples](calendar/java) demonstrating calendar event and notice
+  operations.  The calendar event samples include operations on appointments,
+  meetings and recurring events.
+- [Node.js samples](calendar/nodejs) demontrating calendar notice
+  operations.
 
 ### Freebusy API sample code
 
@@ -32,6 +35,17 @@ These samples demonstrate how to use the Domino freebusy API.  They
 require client code generated from **freebusy.yaml**.  See the detailed
 instructions for:
 
-- [Java](freebusy/java)
-- [Node.js](freebusy/nodejs)
+- [Java samples](freebusy/java) demonstrating requests for busy time and
+  free rooms.
+- [Node.js samples](freebusy/nodejs) demonstrating requests for busy time
+  and free rooms.
+
+### Data API sample code
+
+These samples demonstrate how to use the Domino data API.  They
+require client code generated from **data.yaml**.  See the detailed
+instructions for:
+
+- [Java samples](data/java) demonstrating document, view and database operations.
+- [Node.js samples](data/nodejs) demonstrating document and view operations.
 
