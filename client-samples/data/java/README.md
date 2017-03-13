@@ -273,4 +273,4 @@ Here are some other things to try:
 
 - Explore the generated code in more detail.  You might even
   want to write your own application to integrate with the Domino
-  freebusy API.
+  data API.
