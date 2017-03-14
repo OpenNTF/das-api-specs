@@ -531,6 +531,11 @@ definitions:
       email:
         type: string
         description: Email address of the attendee.
+      userType:
+        type: string
+        description: |
+          The calendar user type -- for example, "individual" or "room".
+          See the iCalendar CUTYPE property for more details.
         
   organizer:
     type: object
