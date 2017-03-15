@@ -38,6 +38,12 @@ tags:
   description: Read a list of mail messages
 - name: message
   description: Send, read or delete a mail message
+- name: draft message
+  description: Create or update a draft message
+- name: trash
+  description: Permanently remove messages in the trash
+- name: quota
+  description: Read information about the mail file quota
   
 # Paths
 paths:
@@ -98,6 +104,7 @@ paths:
         - $ref: '#/parameters/databaseParam'
         - $ref: '#/parameters/unidParam'
         - $ref: '#/parameters/formatParam'
+        - $ref: '#/parameters/markreadParam'
       # Expected responses for this operation:
       responses:
         # Response code
@@ -108,6 +115,58 @@ paths:
         400:
           description: |
            Bad request.  For example, you specified an invalid parameter.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+    put:
+      tags:
+      - "draft message"
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Updates a draft message.
+      # This is array of GET operation parameters:
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/unidParam'
+        -
+          name: message
+          in: body
+          description: The updated message.
+          required: true
+          schema:
+            $ref: '#/definitions/message'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+        400:
+          description: |
+           Bad request.  For example, the API could not parse the JSON input.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+    delete:
+      tags:
+      - "message"
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Deletes a single message.
+      # This is array of GET operation parameters:
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/unidParam'
+        - $ref: '#/parameters/permanentlyParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+        404:
+          description: |
+           Not found.  For example, you specified an invalid UNID.
           schema:
            $ref: '#/definitions/errorResponse'
 
@@ -146,6 +205,227 @@ paths:
            Bad request.  For example, the API could not parse the JSON input.
           schema:
            $ref: '#/definitions/errorResponse'
+
+  # Drafts resource
+  /{folder}/{database}/api/mail/drafts:
+    # This is a HTTP operation
+    get:
+      tags:
+      - "message list"
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Reads a list of messages from a user's drafts view.
+      # This is array of GET operation parameters:
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/startParam'
+        - $ref: '#/parameters/countParam'
+        - $ref: '#/parameters/pageParam'
+        - $ref: '#/parameters/psParam'
+        - $ref: '#/parameters/searchParam'
+        - $ref: '#/parameters/searchmaxdocsParam'
+        - $ref: '#/parameters/sortcolumnParam'
+        - $ref: '#/parameters/sortorderParam'
+        - $ref: '#/parameters/keysParam'
+        - $ref: '#/parameters/keysexactmatchParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/messageListResponse'
+          headers:
+            Content-Range:
+              description: |
+                Range and number of items in the response. For example, 
+                `items 0-9/29`
+              type: string
+        400:
+          description: |
+           Bad request.  For example, you specified an invalid parameter.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+    post:
+      tags:
+      - "draft message"
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Creates a draft message.
+      # This is array of GET operation parameters:
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        -
+          name: message
+          in: body
+          description: The message to send.
+          required: true
+          schema:
+            $ref: '#/definitions/message'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        201:
+          description: Successful response
+          headers:
+            Location:
+              description: |
+                The URL for the new message in the sent folder.
+              type: string
+        400:
+          description: |
+           Bad request.  For example, the API could not parse the JSON input.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+  # Sent resource
+  /{folder}/{database}/api/mail/sent:
+    # This is a HTTP operation
+    get:
+      tags:
+      - "message list"
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Reads a list of messages from a user's sent view.
+      # This is array of GET operation parameters:
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/startParam'
+        - $ref: '#/parameters/countParam'
+        - $ref: '#/parameters/pageParam'
+        - $ref: '#/parameters/psParam'
+        - $ref: '#/parameters/searchParam'
+        - $ref: '#/parameters/searchmaxdocsParam'
+        - $ref: '#/parameters/sortcolumnParam'
+        - $ref: '#/parameters/sortorderParam'
+        - $ref: '#/parameters/keysParam'
+        - $ref: '#/parameters/keysexactmatchParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/messageListResponse'
+          headers:
+            Content-Range:
+              description: |
+                Range and number of items in the response. For example, 
+                `items 0-9/29`
+              type: string
+        400:
+          description: |
+           Bad request.  For example, you specified an invalid parameter.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+  # Trash resource
+  /{folder}/{database}/api/mail/trash:
+    # This is a HTTP operation
+    get:
+      tags:
+      - "message list"
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Reads a list of messages from a user's trash view.
+      # This is array of GET operation parameters:
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/startParam'
+        - $ref: '#/parameters/countParam'
+        - $ref: '#/parameters/pageParam'
+        - $ref: '#/parameters/psParam'
+        - $ref: '#/parameters/searchParam'
+        - $ref: '#/parameters/searchmaxdocsParam'
+        - $ref: '#/parameters/sortcolumnParam'
+        - $ref: '#/parameters/sortorderParam'
+        - $ref: '#/parameters/keysParam'
+        - $ref: '#/parameters/keysexactmatchParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/messageListResponse'
+          headers:
+            Content-Range:
+              description: |
+                Range and number of items in the response. For example, 
+                `items 0-9/29`
+              type: string
+        400:
+          description: |
+           Bad request.  For example, you specified an invalid parameter.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+    delete:
+      tags:
+      - "trash"
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Empties the user's trash view.  This operation permanently
+        deletes all messages in the trash.
+      # This is array of GET operation parameters:
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+
+  # Trash message resource
+  /{folder}/{database}/api/mail/trash/{unid}:
+    delete:
+      tags:
+      - "trash"
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Permanently removes a single message in the trash.
+      # This is array of GET operation parameters:
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/unidParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+        404:
+          description: |
+           Not found.  For example, you specified an invalid UNID.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+  # Quota resource
+  /{folder}/{database}/api/mail/quota:
+    # This is a HTTP operation
+    get:
+      tags:
+      - "quota"
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Reads information about the mail file quota.
+      # This is array of GET operation parameters:
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/quotaResponse'
 
 # Object definitions
 definitions:
@@ -251,6 +531,30 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/messagePart'
+          
+  quotaResponse:
+    type: object
+    properties:
+      enabled:
+        type: boolean
+        description: |
+          `true` if a quota is enabled for this mail file.
+      actualSize:
+        type: integer
+        description: |
+          Size of the mail file on disk (in Kb).
+      usedSize:
+        type: integer
+        description: |
+          Amount of the mail file in use (in Kb).
+      quotaSize:
+        type: integer
+        description: |
+          Quota size limit (in Kb).
+      warningSize:
+        type: integer
+        description: |
+          Quota warning threshold (in Kb).
 
   errorResponse:
     type: object
@@ -399,6 +703,23 @@ parameters:
       Returns entries that match keys exactly. Pair this parameter
       with keys. Example:
       `?sortcolumn=subject&sortorder=ascending&keys=Important&keysexactmatch=true`
+    type: boolean
+    required: false
+
+  markreadParam:
+    name: markread
+    in: query
+    description: |
+      If 'true' mark the message read.
+    type: boolean
+    required: false
+
+  permanentlyParam:
+    name: permanently
+    in: query
+    description: |
+      If 'true' permanently delete the message.  Otherwise,
+      the message is moved to the trash.
     type: boolean
     required: false
 

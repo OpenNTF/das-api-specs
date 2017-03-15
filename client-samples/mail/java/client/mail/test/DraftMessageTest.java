@@ -19,6 +19,7 @@ package client.mail.test;
 import io.swagger.client.ApiClient;
 import io.swagger.client.ApiException;
 import io.swagger.client.ApiResponse;
+import io.swagger.client.api.DraftMessageApi;
 import io.swagger.client.api.MessageApi;
 import io.swagger.client.model.Message;
 import io.swagger.client.model.MessagePart;
@@ -28,18 +29,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class MessageTest {
+public class DraftMessageTest {
     
     private static final String MIME_BOUNDARY = "abcdefg";
 
-    private MessageApi _api;
+    private MessageApi _messageApi;
+    private DraftMessageApi _draftApi;
 
-    public MessageTest(String basePath, String user, String password) {
-        _api = new MessageApi();
-        ApiClient client = _api.getApiClient();
+    public DraftMessageTest(String basePath, String user, String password) {
+        _messageApi = new MessageApi();
+        ApiClient client = _messageApi.getApiClient();
         client.setBasePath(basePath);
         client.setUsername(user);
         client.setPassword(password);
+        
+        _draftApi = new DraftMessageApi();
     }
 
     public static void main(String[] args) {
@@ -60,7 +64,8 @@ public class MessageTest {
         //
         // - password is the user's password.
 		//
-		// - sendTo is the email address of a recipient
+		// - sendTo is the email address of a recipient.  Since the message
+		//   is never sent, this value is not as important.
         //
         String basePath = "http://yourserver.yourorg.com";
         String folder = "mail";
@@ -71,7 +76,7 @@ public class MessageTest {
 
         // Create an instance of the test class
         
-        MessageTest test = new MessageTest(basePath, user, password);
+        DraftMessageTest test = new DraftMessageTest(basePath, user, password);
         
         // Create a message
         
@@ -100,29 +105,53 @@ public class MessageTest {
 
         // Send the message
         
-        String unid = test.sendMessage(folder, database, message);
+        String unid = test.createDraftMessage(folder, database, message);
         
-        // Read the message
+        // Do additional operation only if we have an UNID
 
         if ( unid != null ) {
+            
+            // Read the message
+            
             test.readMessage(folder, database, unid);
+            
+            // Update the message
+            
+            message = new Message();
+            message.setSubject("Test updated message from Swagger generated Java client code");
+            message.addToItem(person);
+            
+            part = new MessagePart();
+            part.setContentType("text/plain");
+            part.setData("This is a test.");
+            message.addContentItem(part);
+
+            test.updateDraftMessage(folder, database, unid, message);
+            
+            // Read the message
+            
+            test.readMessage(folder, database, unid);
+            
+            // Delete the message
+            
+            test.deleteMessage(folder, database, unid);
         }
     }
 
     /**
-     * Sends a message.
+     * Creates a message.
      * 
      * @param folder
      * @param database
      */
-    private String sendMessage(String folder, String database, Message message) {
+    private String createDraftMessage(String folder, String database, Message message) {
         String unid = null;
 
         try {
 
             // Send the message
-            System.out.println("Sending message from " + folder + "/" + database + " ...");
-            ApiResponse<Void> result = _api.folderDatabaseApiMailOutboxPostWithHttpInfo(folder, database, message);
+            System.out.println("Creating draft message in " + folder + "/" + database + " ...");
+            ApiResponse<Void> result = _draftApi.folderDatabaseApiMailDraftsPostWithHttpInfo(folder, database, message);
             
             // Extract the Location header
             String location = null;
@@ -140,7 +169,7 @@ public class MessageTest {
             // Extract the UID from the location
             if (location != null) {
                 // Dump the Location header
-                System.out.println("Send message request succeeded.  Location is " + location);
+                System.out.println("Create request succeeded.  Location is " + location);
 
                 int index = location.lastIndexOf('/');
                 if (index != -1) {
@@ -149,13 +178,13 @@ public class MessageTest {
             }
             else {
                 // Unexpected response
-                System.out.println("Send message request succeeded, but the response doesn't include a Location header.");
+                System.out.println("Create request succeeded, but the response doesn't include a Location header.");
             }
 
             System.out.println();
         }
         catch (ApiException e) {
-            System.err.println("Exception when calling MessageApi#folderDatabaseApiMailOutboxPostWithHttpInfo");
+            System.err.println("Exception when calling DraftMessageApi#folderDatabaseApiMailDraftsPostWithHttpInfo");
             String body = e.getResponseBody();
             if (body != null) {
                 System.err.println("Response from server ...");
@@ -167,6 +196,34 @@ public class MessageTest {
         }
         
         return unid;
+    }
+    
+    /**
+     * Updates a message.
+     * 
+     * @param folder
+     * @param database
+     */
+    private void updateDraftMessage(String folder, String database, String unid, Message message) {
+        try {
+
+            // Update the message
+            System.out.println("Updating draft message " + unid + " ...");
+            ApiResponse<Void> result = _draftApi.folderDatabaseApiMailMessagesUnidPutWithHttpInfo(folder, database, unid, message);
+            
+            System.out.println("Update request succeeded.\n");
+        }
+        catch (ApiException e) {
+            System.err.println("Exception when calling DraftMessageApi#folderDatabaseApiMailDraftsPostWithHttpInfo");
+            String body = e.getResponseBody();
+            if (body != null) {
+                System.err.println("Response from server ...");
+                System.err.println(body);
+            }
+            else {
+                e.printStackTrace();
+            }
+        }
     }
     
     /**
@@ -182,7 +239,7 @@ public class MessageTest {
 
             // Send the message
             System.out.println("Reading message " + unid + " from " + folder + "/" + database + " ...");
-            Message message = _api.folderDatabaseApiMailMessagesUnidGet(folder, database, unid, null, null);
+            Message message = _messageApi.folderDatabaseApiMailMessagesUnidGet(folder, database, unid, null, null);
             
             if ( message != null ) {
                 
@@ -210,6 +267,35 @@ public class MessageTest {
         }
         catch (ApiException e) {
             System.err.println("Exception when calling MessageApi#folderDatabaseApiMailMessagesUnidGet");
+            String body = e.getResponseBody();
+            if (body != null) {
+                System.err.println("Response from server ...");
+                System.err.println(body);
+            }
+            else {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Deletes a message.
+     * 
+     * @param folder
+     * @param database
+     * @param unid
+     */
+    private void deleteMessage(String folder, String database, String unid) {
+        
+        try {
+
+            // Send the message
+            System.out.println("Deleting message " + unid + " from " + folder + "/" + database + " ...");
+            _messageApi.folderDatabaseApiMailMessagesUnidDelete(folder, database, unid, null);
+            
+        }
+        catch (ApiException e) {
+            System.err.println("Exception when calling MessageApi#folderDatabaseApiMailMessagesUnidDelete");
             String body = e.getResponseBody();
             if (body != null) {
                 System.err.println("Response from server ...");
