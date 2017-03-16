@@ -23,7 +23,7 @@ info:
   description: |
    The mail API provides access to a Domino user's mail data. 
    The API represents mail messages in both JSON and MIME format.
-   It represents all other mail objects are in JSON format.
+   It represents all other mail objects in JSON format.
 
 securityDefinitions:
   basic:
@@ -44,19 +44,22 @@ tags:
   description: Permanently remove messages in the trash
 - name: quota
   description: Read information about the mail file quota
+- name: delegate list
+  description: Read a list of delegates for a mail file
+- name: delegate
+  description: Create, read, update or delete a delegate
+- name: access
+  description: Read the level of access to a mail file
   
 # Paths
 paths:
   # Inbox resource
   /{folder}/{database}/api/mail/inbox:
-    # This is a HTTP operation
     get:
       tags:
       - "message list"
-      # Describe this verb here. Note: you can use markdown
-      description: |
+      summary: |
         Reads a list of messages from a user's inbox.
-      # This is array of GET operation parameters:
       parameters:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
@@ -91,14 +94,11 @@ paths:
 
   # Message resource
   /{folder}/{database}/api/mail/messages/{unid}:
-    # This is a HTTP operation
     get:
       tags:
       - "message"
-      # Describe this verb here. Note: you can use markdown
-      description: |
+      summary: |
         Reads a single message.
-      # This is array of GET operation parameters:
       parameters:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
@@ -121,10 +121,8 @@ paths:
     put:
       tags:
       - "draft message"
-      # Describe this verb here. Note: you can use markdown
-      description: |
+      summary: |
         Updates a draft message.
-      # This is array of GET operation parameters:
       parameters:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
@@ -150,10 +148,8 @@ paths:
     delete:
       tags:
       - "message"
-      # Describe this verb here. Note: you can use markdown
-      description: |
+      summary: |
         Deletes a single message.
-      # This is array of GET operation parameters:
       parameters:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
@@ -172,14 +168,11 @@ paths:
 
   # Outbox resource
   /{folder}/{database}/api/mail/outbox:
-    # This is a HTTP operation
     post:
       tags:
       - "message"
-      # Describe this verb here. Note: you can use markdown
-      description: |
+      summary: |
         Sends a message.
-      # This is array of GET operation parameters:
       parameters:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
@@ -208,14 +201,11 @@ paths:
 
   # Drafts resource
   /{folder}/{database}/api/mail/drafts:
-    # This is a HTTP operation
     get:
       tags:
       - "message list"
-      # Describe this verb here. Note: you can use markdown
-      description: |
+      summary: |
         Reads a list of messages from a user's drafts view.
-      # This is array of GET operation parameters:
       parameters:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
@@ -251,17 +241,15 @@ paths:
     post:
       tags:
       - "draft message"
-      # Describe this verb here. Note: you can use markdown
-      description: |
+      summary: |
         Creates a draft message.
-      # This is array of GET operation parameters:
       parameters:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
         -
           name: message
           in: body
-          description: The message to send.
+          description: The message to create.
           required: true
           schema:
             $ref: '#/definitions/message'
@@ -283,14 +271,11 @@ paths:
 
   # Sent resource
   /{folder}/{database}/api/mail/sent:
-    # This is a HTTP operation
     get:
       tags:
       - "message list"
-      # Describe this verb here. Note: you can use markdown
-      description: |
+      summary: |
         Reads a list of messages from a user's sent view.
-      # This is array of GET operation parameters:
       parameters:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
@@ -325,14 +310,11 @@ paths:
 
   # Trash resource
   /{folder}/{database}/api/mail/trash:
-    # This is a HTTP operation
     get:
       tags:
       - "message list"
-      # Describe this verb here. Note: you can use markdown
-      description: |
+      summary: |
         Reads a list of messages from a user's trash view.
-      # This is array of GET operation parameters:
       parameters:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
@@ -368,11 +350,10 @@ paths:
     delete:
       tags:
       - "trash"
-      # Describe this verb here. Note: you can use markdown
+      summary: |
+        Empties the user's trash view.
       description: |
-        Empties the user's trash view.  This operation permanently
-        deletes all messages in the trash.
-      # This is array of GET operation parameters:
+        This operation permanently deletes all messages in the trash.
       parameters:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
@@ -387,10 +368,8 @@ paths:
     delete:
       tags:
       - "trash"
-      # Describe this verb here. Note: you can use markdown
-      description: |
+      summary: |
         Permanently removes a single message in the trash.
-      # This is array of GET operation parameters:
       parameters:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
@@ -408,14 +387,11 @@ paths:
 
   # Quota resource
   /{folder}/{database}/api/mail/quota:
-    # This is a HTTP operation
     get:
       tags:
       - "quota"
-      # Describe this verb here. Note: you can use markdown
-      description: |
+      summary: |
         Reads information about the mail file quota.
-      # This is array of GET operation parameters:
       parameters:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
@@ -426,6 +402,150 @@ paths:
           description: Successful response
           schema:
            $ref: '#/definitions/quotaResponse'
+
+  # Delegate list resource
+  /{folder}/{database}/api/mail/delegates:
+    get:
+      tags:
+      - "delegate list"
+      summary: |
+        Reads the list of delegates for the mail file.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/delegateListResponse'
+
+    post:
+      tags:
+      - "delegate"
+      summary: |
+        Creates a delegate.
+      description: |
+        This operation delegates access to the specified mail file.
+        The delegate name and level of access are defined by the
+        delegate object in the body of the request.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        -
+          name: delegate
+          in: body
+          description: The delegate to create.
+          required: true
+          schema:
+            $ref: '#/definitions/delegate'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        201:
+          description: Successful response
+          headers:
+            Location:
+              description: |
+                The URL for the new delegate.
+              type: string
+        400:
+          description: |
+           Bad request.  For example, the API could not parse the JSON input.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+  # Delegate resource
+  /{folder}/{database}/api/mail/delegates/{name}:
+    get:
+      tags:
+      - "delegate"
+      summary: |
+        Reads a delegate.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/delegateNameParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/delegate'
+
+    put:
+      tags:
+      - "delegate"
+      summary: |
+        Updates a delegate.
+      description: |
+        This operation updates a delegate's access to the specified 
+        mail file. The level of access is defined by the
+        delegate object in the body of the request.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/delegateNameParam'
+        -
+          name: delegate
+          in: body
+          description: The delegate to create.
+          required: true
+          schema:
+            $ref: '#/definitions/delegate'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+        400:
+          description: |
+           Bad request.  For example, the API could not parse the JSON input.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+    delete:
+      tags:
+      - "delegate"
+      summary: |
+        Deletes a delegate.
+      description: |
+        This operation removes a delegate's access to the specified
+        mail file.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/delegateNameParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+
+  # Access resource
+  /{folder}/{database}/api/mail/access:
+    get:
+      tags:
+      - "access"
+      summary: |
+        Reads the level of access to the mail file.
+      description: |
+        This operation reads the level of access the authenticated user
+        has to the specified mail file.  If the authenticated user is not
+        either the owner of or a delegate to the mail file, the request
+        may fail.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/access'
 
 # Object definitions
 definitions:
@@ -556,6 +676,52 @@ definitions:
         description: |
           Quota warning threshold (in Kb).
 
+  access:
+    type: object
+    properties:
+      what:
+        type: string
+        description: |
+          What level of access is allowed. Choices are `nothing`, `calendar` or
+          `mail`. Access to mail resources also implies access to calendar
+          resources.
+      read:
+        type: boolean
+        description: If `true`, the user has read access.
+      create:
+        type: boolean
+        description: If `true`, the user can create new documents.
+      edit:
+        type: boolean
+        description: If `true`, the user can edit existing documents.
+      delete:
+        type: boolean
+        description: If `true`, the user can delete documents.
+
+  delegate:
+    type: object
+    properties:
+      name:
+        type: string
+        description: The name of this delegate.
+      type:
+        type: string
+        description: |
+          The type of this delegate. Choices are `default`, `person` or `group`.
+      href:
+        type: string
+        description: The URL of this delegate.
+      access:
+        $ref: '#/definitions/access'
+
+  delegateListResponse:
+    type: object
+    properties:
+      delegates:
+        type: array
+        items:
+          $ref: '#/definitions/delegate'
+
   errorResponse:
     type: object
     properties:
@@ -592,6 +758,13 @@ parameters:
     name: database
     in: path
     description: Database name.
+    required: true
+    type: string
+  
+  delegateNameParam:
+    name: name
+    in: path
+    description: Delegate name.
     required: true
     type: string
   
