@@ -44,7 +44,9 @@ public class MessageListTest {
         //   on the server. Be sure to change the protocol to
         //   https if necessary.
         //
-        // - folder is mail file database folder.
+        // - folder is the mail file database folder. The folder is relative
+        //   to the Domino data directory.  Use "." if the mail file
+        //   is in the data directory itself.
         //
         // - database is the mail file database name.
         //

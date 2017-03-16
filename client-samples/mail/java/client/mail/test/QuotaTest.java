@@ -19,8 +19,6 @@ package client.mail.test;
 import io.swagger.client.ApiClient;
 import io.swagger.client.ApiException;
 import io.swagger.client.api.QuotaApi;
-import io.swagger.client.model.MessageListEntry;
-import io.swagger.client.model.Person;
 import io.swagger.client.model.QuotaResponse;
 
 public class QuotaTest {
@@ -44,7 +42,9 @@ public class QuotaTest {
         //   on the server. Be sure to change the protocol to
         //   https if necessary.
         //
-        // - folder is mail file database folder.
+        // - folder is the mail file database folder. The folder is relative
+        //   to the Domino data directory.  Use "." if the mail file
+        //   is in the data directory itself.
         //
         // - database is the mail file database name.
         //
