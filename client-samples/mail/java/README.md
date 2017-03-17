@@ -248,14 +248,14 @@ Here are some other things to try:
   the generated client code.  You might even want to step
   through the code in a debugger.
   
-- **MessageTest.java** sends a message in **multipart/alternative**
+- **MessageTest** sends a message in **multipart/alternative**
   format, but the mail API allows you to represent virtually any
   MIME structure in JSON format.  Try changing the contents of the
   test message.
   
 - Add other test classes to the **client-mail-test**
   project.  For example, see
-  [DraftTest.java](client/mail/test/DraftTest.java) and
+  [DraftMessageTest.java](client/mail/test/DraftMessageTest.java) and
   [MessageListTest.java](client/mail/test/MessageListTest.java).
   As you add each new class, be sure to customize it for
   your test environment and rebuild the test project.  Then
