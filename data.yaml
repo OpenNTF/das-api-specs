@@ -51,7 +51,7 @@ tags:
 paths:
   /api/data:
     get:
-      description: |
+      summary: |
         Gets a list of databases.
       tags: ['database list']
       responses:
@@ -62,7 +62,7 @@ paths:
 
   /{folder}/{database}/api/data/collections:
     get:
-      description: |
+      summary: |
         Gets a list of views and folders in a database.
       tags: ['view list']
       parameters:
@@ -76,7 +76,7 @@ paths:
 
   /{folder}/{database}/api/data/collections/name/{viewName}/design:
     get:
-      description: |
+      summary: |
         Gets information on the columns in a view or folder.
       tags: ['view design']
       parameters:
@@ -93,7 +93,7 @@ paths:
 
   /{folder}/{database}/api/data/collections/unid/{viewUnid}/design:
     get:
-      description: |
+      summary: |
         Gets information on the columns in a view or folder.
       tags: ['view design']
       parameters:
@@ -110,7 +110,7 @@ paths:
 
   /{folder}/{database}/api/data/collections/name/{viewName}:
     get:
-      description: |
+      summary: |
         Gets a list of view entries by view name.
       tags: ['view entry list']
       parameters:
@@ -147,7 +147,7 @@ paths:
           description: The specified view wasn't found.
 
     put:
-      description: |
+      summary: |
         Updates the contents of a folder by folder name.
       tags: ['folder']
       parameters:
@@ -171,7 +171,7 @@ paths:
 
   /{folder}/{database}/api/data/collections/unid/{viewUnid}:
     get:
-      description: |
+      summary: |
         Gets a list of view entries by view UNID.
       tags: ['view entry list']
       parameters:
@@ -208,7 +208,7 @@ paths:
           description: The specified view wasn't found.
 
     put:
-      description: |
+      summary: |
         Updates the contents of a folder by folder UNID.
       tags: ['folder']
       parameters:
@@ -232,7 +232,7 @@ paths:
 
   /{folder}/{database}/api/data/documents:
     post:
-      description: |
+      summary: |
         Creates a new document.
       tags: ['document']
       parameters:
@@ -261,9 +261,11 @@ paths:
             the JSON input.
 
     get:
+      summary: |
+        Gets a list of documents. 
       description: |
-        Gets a list of documents. If you don't specify any query 
-        parameters, the response includes all the documents in the database.
+        If you don't specify any query parameters, 
+        the response includes all the documents in the database.
         To limit the number of documents returned, use the optional 
         `since` or `search` parameters.
       tags: ['document list']
@@ -281,7 +283,7 @@ paths:
 
   /{folder}/{database}/api/data/documents/unid/{docUnid}:
     get:
-      description: |
+      summary: |
         Reads a document.
       tags: ['document']
       parameters:
@@ -311,7 +313,7 @@ paths:
           description: The specified document wasn't found.
 
     patch:
-      description: |
+      summary: |
         Updates selected items in a document.
       tags: ['document']
       parameters:
@@ -344,7 +346,7 @@ paths:
             the document has been modified since the specified date.
 
     put:
-      description: |
+      summary: |
         Replaces all items in a document.
       tags: ['document']
       parameters:
@@ -377,7 +379,7 @@ paths:
             the document has been modified since the specified date.
 
     delete:
-      description: |
+      summary: |
         Deletes a document.
       tags: ['document']
       parameters:

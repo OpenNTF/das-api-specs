@@ -46,16 +46,12 @@ tags:
 paths:
   # Busy time resource
   /api/freebusy/busytime:
-    # This is a HTTP operation
     get:
       tags:
       - "busytime"
-      # Describe this verb here. Note: you can use markdown
-      description: |
+      summary: |
         Gets busy time for a given person or room.
-      # This is array of GET operation parameters:
       parameters:
-        # An example parameter that is in query and is required
         -
           name: name
           in: query
@@ -116,16 +112,12 @@ paths:
         
   # Free rooms resource   
   /api/freebusy/freerooms:
-    # This is a HTTP operation
     get:
       tags:
       - "freerooms"
-      # Describe this verb here. Note: you can use markdown
-      description: |
+      summary: |
         Gets a list of available rooms for a given time.
-      # This is array of GET operation parameters:
       parameters:
-        # An example parameter that is in query and is required
         -
           name: site
           in: query
@@ -174,12 +166,10 @@ paths:
 
   # Directories resource
   /api/freebusy/directories:
-    # This is a HTTP operation
     get:
       tags:
       - "sites"
-      # Describe this verb here. Note: you can use markdown
-      description: |
+      summary: |
         Gets a list of directories.
       responses:
         200:
@@ -189,12 +179,10 @@ paths:
 
   # Sites resource
   /api/freebusy/sites/{directory}:
-    # This is a HTTP operation
     get:
       tags:
       - "sites"
-      # Describe this verb here. Note: you can use markdown
-      description: |
+      summary: |
         Gets a list of sites in a directory.
       parameters:
         -
