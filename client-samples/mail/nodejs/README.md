@@ -148,9 +148,9 @@ Message 1
   from: Room 1001
 
 Message 2
-  subject: Accepted: API test
+  subject: Pi Day celebration
   date: 2017-03-14T12:59:07Z
-  from: Room 1001
+  from: Raymond Chan
 
 Message 3
   subject: Accepted: API test
