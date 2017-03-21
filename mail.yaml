@@ -1,0 +1,898 @@
+#
+# © Copyright IBM Corp. 2017
+# 
+# Licensed under the Apache License, Version 2.0 (the "License"); 
+# you may not use this file except in compliance with the License. 
+# You may obtain a copy of the License at:
+# 
+# http://www.apache.org/licenses/LICENSE-2.0 
+# 
+# Unless required by applicable law or agreed to in writing, software 
+# distributed under the License is distributed on an "AS IS" BASIS, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+# implied. See the License for the specific language governing 
+# permissions and limitations under the License.
+#
+
+swagger: '2.0'
+
+# Document metadata
+info:
+  title: IBM Domino Mail API
+  version: "9.0.1"
+  description: |
+   The mail API provides access to a Domino user's mail data. 
+   The API represents mail messages in both JSON and MIME format.
+   It represents all other mail objects in JSON format.
+
+securityDefinitions:
+  basic:
+    type: basic
+
+security:
+  - basic: []
+  
+# Tags
+tags:
+- name: message list
+  description: Read a list of mail messages
+- name: message
+  description: Send, read or delete a mail message
+- name: draft message
+  description: Create or update a draft message
+- name: trash
+  description: Permanently remove messages in the trash
+- name: quota
+  description: Read information about the mail file quota
+- name: delegate list
+  description: Read a list of delegates for a mail file
+- name: delegate
+  description: Create, read, update or delete a delegate
+- name: access
+  description: Read the level of access to a mail file
+  
+# Paths
+paths:
+  # Inbox resource
+  /{folder}/{database}/api/mail/inbox:
+    get:
+      tags:
+      - "message list"
+      summary: |
+        Reads a list of messages from a user's inbox.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/startParam'
+        - $ref: '#/parameters/countParam'
+        - $ref: '#/parameters/pageParam'
+        - $ref: '#/parameters/psParam'
+        - $ref: '#/parameters/searchParam'
+        - $ref: '#/parameters/searchmaxdocsParam'
+        - $ref: '#/parameters/sortcolumnParam'
+        - $ref: '#/parameters/sortorderParam'
+        - $ref: '#/parameters/keysParam'
+        - $ref: '#/parameters/keysexactmatchParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/messageListResponse'
+          headers:
+            Content-Range:
+              description: |
+                Range and number of items in the response. For example, 
+                `items 0-9/29`
+              type: string
+        400:
+          description: |
+           Bad request.  For example, you specified an invalid parameter.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+  # Message resource
+  /{folder}/{database}/api/mail/messages/{unid}:
+    get:
+      tags:
+      - "message"
+      summary: |
+        Reads a single message.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/unidParam'
+        - $ref: '#/parameters/formatParam'
+        - $ref: '#/parameters/markreadParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/message'
+        400:
+          description: |
+           Bad request.  For example, you specified an invalid parameter.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+    put:
+      tags:
+      - "draft message"
+      summary: |
+        Updates a draft message.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/unidParam'
+        -
+          name: message
+          in: body
+          description: The updated message.
+          required: true
+          schema:
+            $ref: '#/definitions/message'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+        400:
+          description: |
+           Bad request.  For example, the API could not parse the JSON input.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+    delete:
+      tags:
+      - "message"
+      summary: |
+        Deletes a single message.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/unidParam'
+        - $ref: '#/parameters/permanentlyParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+        404:
+          description: |
+           Not found.  For example, you specified an invalid UNID.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+  # Outbox resource
+  /{folder}/{database}/api/mail/outbox:
+    post:
+      tags:
+      - "message"
+      summary: |
+        Sends a message.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        -
+          name: message
+          in: body
+          description: The message to send.
+          required: true
+          schema:
+            $ref: '#/definitions/message'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        201:
+          description: Successful response
+          headers:
+            Location:
+              description: |
+                The URL for the new message in the sent folder.
+              type: string
+        400:
+          description: |
+           Bad request.  For example, the API could not parse the JSON input.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+  # Drafts resource
+  /{folder}/{database}/api/mail/drafts:
+    get:
+      tags:
+      - "message list"
+      summary: |
+        Reads a list of messages from a user's drafts view.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/startParam'
+        - $ref: '#/parameters/countParam'
+        - $ref: '#/parameters/pageParam'
+        - $ref: '#/parameters/psParam'
+        - $ref: '#/parameters/searchParam'
+        - $ref: '#/parameters/searchmaxdocsParam'
+        - $ref: '#/parameters/sortcolumnParam'
+        - $ref: '#/parameters/sortorderParam'
+        - $ref: '#/parameters/keysParam'
+        - $ref: '#/parameters/keysexactmatchParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/messageListResponse'
+          headers:
+            Content-Range:
+              description: |
+                Range and number of items in the response. For example, 
+                `items 0-9/29`
+              type: string
+        400:
+          description: |
+           Bad request.  For example, you specified an invalid parameter.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+    post:
+      tags:
+      - "draft message"
+      summary: |
+        Creates a draft message.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        -
+          name: message
+          in: body
+          description: The message to create.
+          required: true
+          schema:
+            $ref: '#/definitions/message'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        201:
+          description: Successful response
+          headers:
+            Location:
+              description: |
+                The URL for the new message in the sent folder.
+              type: string
+        400:
+          description: |
+           Bad request.  For example, the API could not parse the JSON input.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+  # Sent resource
+  /{folder}/{database}/api/mail/sent:
+    get:
+      tags:
+      - "message list"
+      summary: |
+        Reads a list of messages from a user's sent view.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/startParam'
+        - $ref: '#/parameters/countParam'
+        - $ref: '#/parameters/pageParam'
+        - $ref: '#/parameters/psParam'
+        - $ref: '#/parameters/searchParam'
+        - $ref: '#/parameters/searchmaxdocsParam'
+        - $ref: '#/parameters/sortcolumnParam'
+        - $ref: '#/parameters/sortorderParam'
+        - $ref: '#/parameters/keysParam'
+        - $ref: '#/parameters/keysexactmatchParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/messageListResponse'
+          headers:
+            Content-Range:
+              description: |
+                Range and number of items in the response. For example, 
+                `items 0-9/29`
+              type: string
+        400:
+          description: |
+           Bad request.  For example, you specified an invalid parameter.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+  # Trash resource
+  /{folder}/{database}/api/mail/trash:
+    get:
+      tags:
+      - "message list"
+      summary: |
+        Reads a list of messages from a user's trash view.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/startParam'
+        - $ref: '#/parameters/countParam'
+        - $ref: '#/parameters/pageParam'
+        - $ref: '#/parameters/psParam'
+        - $ref: '#/parameters/searchParam'
+        - $ref: '#/parameters/searchmaxdocsParam'
+        - $ref: '#/parameters/sortcolumnParam'
+        - $ref: '#/parameters/sortorderParam'
+        - $ref: '#/parameters/keysParam'
+        - $ref: '#/parameters/keysexactmatchParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/messageListResponse'
+          headers:
+            Content-Range:
+              description: |
+                Range and number of items in the response. For example, 
+                `items 0-9/29`
+              type: string
+        400:
+          description: |
+           Bad request.  For example, you specified an invalid parameter.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+    delete:
+      tags:
+      - "trash"
+      summary: |
+        Empties the user's trash view.
+      description: |
+        This operation permanently deletes all messages in the trash.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+
+  # Trash message resource
+  /{folder}/{database}/api/mail/trash/{unid}:
+    delete:
+      tags:
+      - "trash"
+      summary: |
+        Permanently removes a single message in the trash.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/unidParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+        404:
+          description: |
+           Not found.  For example, you specified an invalid UNID.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+  # Quota resource
+  /{folder}/{database}/api/mail/quota:
+    get:
+      tags:
+      - "quota"
+      summary: |
+        Reads information about the mail file quota.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/quotaResponse'
+
+  # Delegate list resource
+  /{folder}/{database}/api/mail/delegates:
+    get:
+      tags:
+      - "delegate list"
+      summary: |
+        Reads the list of delegates for the mail file.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/delegateListResponse'
+
+    post:
+      tags:
+      - "delegate"
+      summary: |
+        Creates a delegate.
+      description: |
+        This operation delegates access to the specified mail file.
+        The delegate name and level of access are defined by the
+        delegate object in the body of the request.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        -
+          name: delegate
+          in: body
+          description: The delegate to create.
+          required: true
+          schema:
+            $ref: '#/definitions/delegate'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        201:
+          description: Successful response
+          headers:
+            Location:
+              description: |
+                The URL for the new delegate.
+              type: string
+        400:
+          description: |
+           Bad request.  For example, the API could not parse the JSON input.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+  # Delegate resource
+  /{folder}/{database}/api/mail/delegates/{name}:
+    get:
+      tags:
+      - "delegate"
+      summary: |
+        Reads a delegate.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/delegateNameParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/delegate'
+
+    put:
+      tags:
+      - "delegate"
+      summary: |
+        Updates a delegate.
+      description: |
+        This operation updates a delegate's access to the specified 
+        mail file. The level of access is defined by the
+        delegate object in the body of the request.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/delegateNameParam'
+        -
+          name: delegate
+          in: body
+          description: The delegate to create.
+          required: true
+          schema:
+            $ref: '#/definitions/delegate'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+        400:
+          description: |
+           Bad request.  For example, the API could not parse the JSON input.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+    delete:
+      tags:
+      - "delegate"
+      summary: |
+        Deletes a delegate.
+      description: |
+        This operation removes a delegate's access to the specified
+        mail file.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/delegateNameParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+
+  # Access resource
+  /{folder}/{database}/api/mail/access:
+    get:
+      tags:
+      - "access"
+      summary: |
+        Reads the level of access to the mail file.
+      description: |
+        This operation reads the level of access the authenticated user
+        has to the specified mail file.  If the authenticated user is not
+        either the owner of or a delegate to the mail file, the request
+        may fail.
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/access'
+
+# Object definitions
+definitions:
+  person:
+    type: object
+    properties:
+      displayName:
+        type: string
+        description: Display name for this person.
+      distinquishedName:
+        type: string
+        description: Distinguished name for this person.
+      email:
+        type: string
+        description: Email address for this person.
+        
+  messageListEntry:
+    type: object
+    properties:
+      href: 
+        type: string
+        description: Relative URL for this message.
+      subject: 
+        type: string
+        description: The subject of the message.
+      date: 
+        type: string
+        description: The date of the message.
+      from:
+        $ref: '#/definitions/person'
+      read: 
+        type: boolean
+        description: |
+          'true' has been read; `false` if the message has not
+          been read.
+     
+  messageListResponse:
+    type: array
+    items:
+      $ref: '#/definitions/messageListEntry'
+
+  messagePart:
+    type: object
+    properties:
+      contentType:
+        type: string
+        description: Content type of this part.
+      contentDisposition:
+        type: string
+        description: Content disposition of this part.
+      contentID:
+        type: string
+        description: Content ID of this part.
+      contentTransferEncoding:
+        type: string
+        description: |
+          Transfer encoding of this part -- for example "base64".
+      boundary:
+        type: string
+        description: Boundary of this part.
+      data:
+        type: string
+        description: Data of this part.
+        
+  message:
+    type: object
+    properties:
+      href: 
+        type: string
+        description: Relative URL for this message.
+      subject: 
+        type: string
+        description: The subject of the message.
+      date: 
+        type: string
+        description: The date of the message.
+      from:
+        $ref: '#/definitions/person'
+      to:
+        type: array
+        description: Array of recipients in the To field
+        items:
+          $ref: '#/definitions/person'
+      cc:
+        type: array
+        description: Array of recipients in the Cc field
+        items:
+          $ref: '#/definitions/person'
+      bcc:
+        type: array
+        description: Array of recipients in the Bcc field
+        items:
+          $ref: '#/definitions/person'
+      recieptTo:
+        $ref: '#/definitions/person'
+      messageId:
+        type: string
+        description: The message ID.
+      inReplyTo:
+        type: string
+        description: If this is a reply, the message ID of the parent message.
+      content:
+        type: array
+        items:
+          $ref: '#/definitions/messagePart'
+          
+  quotaResponse:
+    type: object
+    properties:
+      enabled:
+        type: boolean
+        description: |
+          `true` if a quota is enabled for this mail file.
+      actualSize:
+        type: integer
+        description: |
+          Size of the mail file on disk (in Kb).
+      usedSize:
+        type: integer
+        description: |
+          Amount of the mail file in use (in Kb).
+      quotaSize:
+        type: integer
+        description: |
+          Quota size limit (in Kb).
+      warningSize:
+        type: integer
+        description: |
+          Quota warning threshold (in Kb).
+
+  access:
+    type: object
+    properties:
+      what:
+        type: string
+        description: |
+          What level of access is allowed. Choices are `nothing`, `calendar` or
+          `mail`. Access to mail resources also implies access to calendar
+          resources.
+      read:
+        type: boolean
+        description: If `true`, the user has read access.
+      create:
+        type: boolean
+        description: If `true`, the user can create new documents.
+      edit:
+        type: boolean
+        description: If `true`, the user can edit existing documents.
+      delete:
+        type: boolean
+        description: If `true`, the user can delete documents.
+
+  delegate:
+    type: object
+    properties:
+      name:
+        type: string
+        description: The name of this delegate.
+      type:
+        type: string
+        description: |
+          The type of this delegate. Choices are `default`, `person` or `group`.
+      href:
+        type: string
+        description: The URL of this delegate.
+      access:
+        $ref: '#/definitions/access'
+
+  delegateListResponse:
+    type: object
+    properties:
+      delegates:
+        type: array
+        items:
+          $ref: '#/definitions/delegate'
+
+  errorResponse:
+    type: object
+    properties:
+      code:
+        type: integer
+        description: HTTP status code.  For example, 400.
+      text:
+        type: string
+        description: HTTP status text.  For example, "Bad request".
+      message:
+        type: string
+        description: Request specific error message.  For example, "Name not found". 
+      data:
+        type: string
+        description: |
+          Error specific details.  When present, this may include
+          a server-side stack trace.
+      type:
+        type: string
+        description: |
+          When the type of the `data` property when present.
+          For example, "text".
+
+# Definitions of common parameters
+parameters:          
+  folderParam:
+    name: folder
+    in: path
+    description: Database folder.
+    required: true
+    type: string
+  
+  databaseParam:
+    name: database
+    in: path
+    description: Database name.
+    required: true
+    type: string
+  
+  delegateNameParam:
+    name: name
+    in: path
+    description: Delegate name.
+    required: true
+    type: string
+  
+  formatParam:
+    name: format
+    in: query
+    description: |
+     The desired format of the response. If you omit this
+     parameter, the response is in JSON format. For MIME
+     format, specify `format=mime`.
+    required: false
+    type: string
+    
+  unidParam:
+    name: unid
+    in: path
+    description: |
+     The message UNID.
+    required: true
+    type: string
+    
+  startParam:
+    name: start
+    in: query
+    description: |
+      Specifies the starting entry. Defaults to 0 (the first entry).
+    type: integer
+    required: false
+
+  countParam:
+    name: count
+    in: query
+    description: |
+      Specifies the number of entries to return. Defaults to 10.
+      Note: Use `start` and `count` together, or use `ps` and 
+      `page` together.
+    type: integer
+    required: false
+
+  pageParam:
+    name: page
+    in: query
+    description: |
+      Page number. The API returns entries based on a multiple of
+      this parameter and the page size parameter (`ps`).
+    type: integer
+    required: false
+
+  psParam:
+    name: ps
+    in: query
+    description: |
+      Page size or the number of entries to return.
+    type: integer
+    required: false
+
+  searchParam:
+    name: search
+    in: query
+    description: |
+      Returns only documents that match a full-text query. An error
+      occurs if the database is not full-text indexed.
+    type: string
+    required: false
+
+  searchmaxdocsParam:
+    name: searchmaxdocs
+    in: query
+    description: |
+      Limits the number of documents returned by a full-text search.
+    type: integer
+    required: false
+
+  sortcolumnParam:
+    name: sortcolumn
+    in: query
+    description: |
+      Returns entries sorted on a column. If the column is not sorted
+      by design or does not exist, this parameter has no effect.
+    type: string
+    required: false
+
+  sortorderParam:
+    name: sortorder
+    in: query
+    description: |
+      Specifies the sort order. The parameter value should be either
+      `ascending` or `descending`. Pair this parameter with `sortcolumn`.
+    type: string
+    enum: 
+      - ascending
+      - descending
+    required: false
+
+  keysParam:
+    name: keys
+    in: query
+    description: |
+      Returns entries whose initial characters match keys. Pair this
+      parameter with sortcolumn. Example:
+      `?sortcolumn=subject&sortorder=ascending&keys=Important`
+    type: string
+    required: false
+
+  keysexactmatchParam:
+    name: keysexactmatch
+    in: query
+    description: |
+      Returns entries that match keys exactly. Pair this parameter
+      with keys. Example:
+      `?sortcolumn=subject&sortorder=ascending&keys=Important&keysexactmatch=true`
+    type: boolean
+    required: false
+
+  markreadParam:
+    name: markread
+    in: query
+    description: |
+      If 'true' mark the message read.
+    type: boolean
+    required: false
+
+  permanentlyParam:
+    name: permanently
+    in: query
+    description: |
+      If 'true' permanently delete the message.  Otherwise,
+      the message is moved to the trash.
+    type: boolean
+    required: false
+

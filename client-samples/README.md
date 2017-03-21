@@ -26,7 +26,7 @@ instructions for:
 - [Java samples](calendar/java) demonstrating calendar event and notice
   operations.  The calendar event samples include operations on appointments,
   meetings and recurring events.
-- [Node.js samples](calendar/nodejs) demontrating calendar notice
+- [Node.js samples](calendar/nodejs) demonstrating calendar notice
   operations.
 
 ### Freebusy API sample code
@@ -39,6 +39,18 @@ instructions for:
   free rooms.
 - [Node.js samples](freebusy/nodejs) demonstrating requests for busy time
   and free rooms.
+
+### Mail API sample code
+
+These samples demonstrate how to use the Domino mail API.  They
+require client code generated from **mail.yaml**.  See the detailed
+instructions for:
+
+- [Java samples](mail/java) demonstrating message, quota and delegation
+  operations.  The message operations include sending, drafting, reading
+  and deleting messages.
+- [Node.js samples](mail/nodejs) demonstrating message and quota
+  operations.
 
 ### Data API sample code
 
