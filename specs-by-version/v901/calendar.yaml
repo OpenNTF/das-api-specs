@@ -24,11 +24,6 @@ info:
    The calendar API provides access to a Domino user's calendar data. 
    The API represents calendar data in both JSON and iCalendar format.
 
-    **Important**: This version of the OpenAPI spec (**calendar.yaml**) includes
-    calendar API changes from Domino 9.0.1 FP8. This includes optional new query
-    parameters for some operations.  If you are using a version of Domino before
-    9.0.1 FP8, consider using an earlier version of the spec.
-
 securityDefinitions:
   basic:
     type: basic
@@ -69,35 +64,17 @@ paths:
           in: query
           description: |
            The start time of the date range in UTC (for example, 
-           `since=2017-09-01T13:00:00Z`). If neither `since` or `sincenow` 
-           is specified, the default is the time of the request.
+           `since=2017-09-01T13:00:00Z`). If `since` is not specified, 
+           the default is the time of the request.
           type: string
         - 
           name: before
           in: query
           description: |
            The end time of the date range in UTC (for example, 
-           `before=2017-10-01T13:00:00Z`). If neither `before` or `days` is 
-           specified, the default is one year from the start time.
+           `before=2017-10-01T13:00:00Z`). If `before` is not specified, 
+           the default is one year from the value of the `since` parameter.
           type: string
-        -
-          name: sincenow
-          in: query
-          description: |
-           The start time of the date range relative to now. For example,
-           `sincenow=30` indicates a start time 30 days from today.  The
-           `since` and `sincenow` parameters are mutually exclusive.
-          required: false
-          type: integer
-        -
-          name: days
-          in: query
-          description: |
-           The end time of the date range expressed as the number of days
-           since the start time (for example, `days=15`).  The `before` and
-           `days` parameters are mutually exclusive.
-          required: false
-          type: integer
         - 
           name: count
           in: query
@@ -190,7 +167,6 @@ paths:
         - $ref: '#/parameters/literallyParam'
         - $ref: '#/parameters/workflowParam'
         - $ref: '#/parameters/workflowCommentParam'
-        - $ref: '#/parameters/strictSequenceParam'
         - $ref: '#/parameters/eventBody'
       responses:
         200:
@@ -306,7 +282,6 @@ paths:
         - $ref: '#/parameters/literallyParam'
         - $ref: '#/parameters/workflowParam'
         - $ref: '#/parameters/workflowCommentParam'
-        - $ref: '#/parameters/strictSequenceParam'
         - $ref: '#/parameters/eventBody'
       responses:
         200:
@@ -843,19 +818,6 @@ parameters:
      description property, the calendar API preserves the existing the
      existing description including attachments. You can override this
      behavior by including the parameter `literally=true`.  
-    required: false
-    type: boolean
-    
-  strictSequenceParam:
-    name: strictsequence
-    in: query
-    description: |
-     When you use PUT to update an event and you do not include a 
-     sequence property, the calendar API assumes your update is based
-     on the latest version of the event. You can override this
-     behavior by including the parameter `strictsequence=true`.
-     This parameter is only used for an event with attendees
-     (a meeting).  The default value is `false`.
     required: false
     type: boolean
     

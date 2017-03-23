@@ -229,7 +229,12 @@ public class DocumentTest {
         try {
             System.out.println("Reading document " + unid + "...");
             document = _api.folderDatabaseApiDataDocumentsUnidDocUnidGet(folder, database, unid,
-                                false, false, true, null);
+                                false,  // hidden
+                                true,   // multipart
+                                true,   // strongtype
+                                false,  // lowercasefields
+                                null,   // fields filter
+                                null);  // If-Modified-Since header
             
             if ( document != null ) {
                 System.out.println("Read document request succeeded");

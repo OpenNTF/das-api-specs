@@ -23,11 +23,6 @@ info:
     The data API provides access to any database for which it is enabled.
     The API represents databases, views, view entries, and documents in
     JSON format.
-    
-    **Important**: This version of the OpenAPI spec (**data.yaml**) includes
-    data API changes from Domino 9.0.1 FP8. This includes optional new query
-    parameters for some operations.  If you are using a version of Domino before
-    9.0.1 FP8, consider using an earlier version of the spec.
 
 securityDefinitions:
   basic:
@@ -298,8 +293,6 @@ paths:
         - $ref: '#/parameters/hiddenParam'
         - $ref: '#/parameters/multipartParam'
         - $ref: '#/parameters/strongtypeParam'
-        - $ref: '#/parameters/lowerCaseFieldsParam'
-        - $ref: '#/parameters/fieldsParam'
         - $ref: '#/parameters/ifModifiedSinceParam'
       responses:
         '200':
@@ -926,28 +919,4 @@ parameters:
       Returns only documents modified since a specified time. Specify
       the time in ISO 8601 format.  For example, `2011-08-21T20:21:00Z`.
     type: string
-    required: false
-
-  fieldsParam:
-    name: fields
-    in: query
-    description: |
-      Specifies the list of fields expected in the response.  For example,
-      `fields=FirstName,LastName` limits the JSON response to items matching
-      those field names.  If the document includes items named `EMail` and 
-      `Photo`, they are not included in the response.  Use this parameter to
-      limit the size of the response.
-    type: string
-    required: false
-
-  lowerCaseFieldsParam:
-    name: lowercasefields
-    in: query
-    description: |
-      When `true`, the reponse property names are all lower case.
-      For example, a document item called `FirstName` is represented as
-      `firstname` in the JSON response.  This parameter can help resolve
-      issues caused by inconsistent naming of items across documents 
-      (`FirstName` in one document and `FIRSTNAME` in another.)
-    type: boolean
     required: false

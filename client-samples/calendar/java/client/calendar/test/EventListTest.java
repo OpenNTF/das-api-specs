@@ -61,7 +61,14 @@ public class EventListTest {
             // Request a list of events
             System.out.println("Requesting events from " + folder + "/" + database + " ...");
             EventListResponse result = eventsApi.folderDatabaseApiCalendarEventsGet(folder, database, 
-                                            null, null, null, null, null, null);
+                                            null,   // format
+                                            null,   // since 
+                                            null,   // before
+                                            null,   // sincenow
+                                            null,   // days
+                                            null,   // count
+                                            null,   // start
+                                            null);  // fields
 
             // Does the response have events?
             List<Event> events = result.getEvents();
