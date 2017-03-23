@@ -69,7 +69,7 @@ versions of the OpenAPI specifications in this repository.
 Currently, this repository includes the following versions of each
 specification:
 
-| Specification     | Domino Version                                                               | XLIB Version               |
+| Specification     | Domino Version                                                               | Extension Library Version  |
 | ----------------- | ---------------------------------------------------------------------------- | -------------------------- |
 | **calendar.yaml** | [901 - 901FP7](specs-by-version/v901/calendar.yaml), [901FP8](calendar.yaml) | [901v00_17](calendar.yaml) |
 | **data.yaml**     | [901 - 901FP7](specs-by-version/v901/data.yaml), [901FP8](data.yaml)         | [901v00_17](data.yaml)     |
