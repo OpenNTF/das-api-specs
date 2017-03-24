@@ -127,10 +127,22 @@ public class ViewEntryListTest {
             System.out.println("Requesting a list of view entries ...");
             result = _viewEntryApi.folderDatabaseApiDataCollectionsNameViewNameGet(
                                                 folder, database, view, 
-                                                null, null, null, null,
-                                                null, null, null, null,
-                                                null, null, null, null,
-                                                null, null, null);
+                                                null,   // start 
+                                                null,   // count
+                                                null,   // page
+                                                null,   // ps
+                                                null,   // entrycount
+                                                null,   // search
+                                                null,   // searchmaxdocs
+                                                null,   // sortcolumn
+                                                null,   // sortorder
+                                                null,   // startkeys
+                                                null,   // keys
+                                                null,   // keysexactmatch
+                                                null,   // expandlevel
+                                                null,   // category
+                                                null,   // parentid
+                                                null);  // systemcolumns
             
             if ( result.size() > 0 ) {
                 System.out.println("Request succeeded. An excerpt from the response follows ...\n");

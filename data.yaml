@@ -137,6 +137,7 @@ paths:
         - $ref: '#/parameters/expandlevelParam'
         - $ref: '#/parameters/categoryParam'
         - $ref: '#/parameters/parentidParam'
+        - $ref: '#/parameters/systemcolumnsParam'
       responses:
         '200':
           description: Successful response
@@ -198,6 +199,7 @@ paths:
         - $ref: '#/parameters/expandlevelParam'
         - $ref: '#/parameters/categoryParam'
         - $ref: '#/parameters/parentidParam'
+        - $ref: '#/parameters/systemcolumnsParam'
       responses:
         '200':
           description: Successful response
@@ -830,8 +832,20 @@ parameters:
     in: query
     description: |
       Returns only entries that are descendants of the specified entry
-      UNID. Example: `?parentid=9B8F4A02A5F5254E852578950064EC03`
+      UNID. Example: `parentid=9B8F4A02A5F5254E852578950064EC03`
     type: string
+    required: false
+
+  systemcolumnsParam:
+    name: systemcolumns
+    in: query
+    description: |
+      Limits system data to `@entryid` plus a bit mask formed by adding bit 
+      values from the response properties table. Use hexadecimal or decimal. 
+      For example, `systemcolumns=0x80a` returns only `@entryid`, `@unid`, 
+      `@read`, and `@href`. In decimal format, `systemcolumns=2058` has the 
+      same effect.
+    type: integer
     required: false
 
   docUnidParam:
