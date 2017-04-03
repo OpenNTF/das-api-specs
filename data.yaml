@@ -302,6 +302,7 @@ paths:
         - $ref: '#/parameters/strongtypeParam'
         - $ref: '#/parameters/lowerCaseFieldsParam'
         - $ref: '#/parameters/fieldsParam'
+        - $ref: '#/parameters/markReadParam'
         - $ref: '#/parameters/ifModifiedSinceParam'
       responses:
         '200':
@@ -965,3 +966,14 @@ parameters:
       (`FirstName` in one document and `FIRSTNAME` in another.)
     type: boolean
     required: false
+
+  markReadParam:
+    name: markread
+    in: query
+    description: |
+      When `false`, the document is not marked read for the authenticated
+      user.  When `true`, the document is marked read.  When this parameter
+      is omitted, the default value is `true`.
+    type: boolean
+    required: false
+

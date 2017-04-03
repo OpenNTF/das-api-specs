@@ -234,6 +234,7 @@ public class DocumentTest {
                                 true,   // strongtype
                                 false,  // lowercasefields
                                 null,   // fields filter
+                                true,   // markread
                                 null);  // If-Modified-Since header
             
             if ( document != null ) {
