@@ -123,6 +123,9 @@ paths:
       - "draft message"
       summary: |
         Updates a draft message.
+      consumes:
+        - application/json
+        - message/rfc822
       parameters:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
@@ -173,6 +176,9 @@ paths:
       - "message"
       summary: |
         Sends a message.
+      consumes:
+        - application/json
+        - message/rfc822
       parameters:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
@@ -243,6 +249,9 @@ paths:
       - "draft message"
       summary: |
         Creates a draft message.
+      consumes:
+        - application/json
+        - message/rfc822
       parameters:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'

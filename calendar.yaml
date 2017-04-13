@@ -136,6 +136,9 @@ paths:
       - "event"
       summary: |
         Creates a new event on a user's calendar.
+      consumes:
+        - application/json
+        - text/calendar
       parameters:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
@@ -183,6 +186,9 @@ paths:
       - "event"
       summary: |
         Updates an event on a user's calendar.
+      consumes:
+        - application/json
+        - text/calendar
       parameters:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
@@ -298,6 +304,9 @@ paths:
       - "event instance"
       summary: |
         Updates an instance of a recurring event.
+      consumes:
+        - application/json
+        - text/calendar
       parameters:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
