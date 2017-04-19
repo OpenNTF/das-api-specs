@@ -588,8 +588,8 @@ definitions:
       read: 
         type: boolean
         description: |
-          `true` if the message has been read; `false` if the message 
-          has not been read.
+          'true' has been read; `false` if the message has not
+          been read.
      
   messageListResponse:
     type: array
@@ -892,8 +892,7 @@ parameters:
     name: markread
     in: query
     description: |
-      If omitted or `true`, mark the message read.  If `false`, don't
-      mark the message read.
+      If 'true' mark the message read.
     type: boolean
     required: false
 
@@ -901,7 +900,7 @@ parameters:
     name: permanently
     in: query
     description: |
-      If `true` permanently delete the message.  Otherwise,
+      If 'true' permanently delete the message.  Otherwise,
       the message is moved to the trash.
     type: boolean
     required: false
