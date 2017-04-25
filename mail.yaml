@@ -989,10 +989,10 @@ definitions:
         type: string
         description: Relative URL of this folder.
       name:
-        type: boolean
+        type: string
         description: Name of this folder.
       unid:
-        type: boolean
+        type: string
         description: The UNID of this folder.
       links:
         type: array
