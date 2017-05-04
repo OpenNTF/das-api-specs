@@ -211,7 +211,7 @@ public class DraftMessageTest {
 
             // Update the message
             System.out.println("Updating draft message " + unid + " ...");
-            ApiResponse<Void> result = _draftApi.folderDatabaseApiMailMessagesUnidPutWithHttpInfo(folder, database, unid, message);
+            ApiResponse<Void> result = _draftApi.folderDatabaseApiMailMessagesUnidPutWithHttpInfo(folder, database, unid, message, null);
             
             System.out.println("Update request succeeded.\n");
         }
