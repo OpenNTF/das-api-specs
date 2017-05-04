@@ -162,6 +162,7 @@ paths:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
         - $ref: '#/parameters/unidParam'
+        - $ref: '#/parameters/sendParam'
         -
           name: message
           in: body
@@ -1177,3 +1178,12 @@ parameters:
     type: boolean
     required: false
 
+  sendParam:
+    name: send
+    in: query
+    description: |
+      If `true` send the updated draft message. After the message is
+      sent, it won't be in the Drafts view and cannot be updated 
+      anymore.
+    type: boolean
+    required: false
