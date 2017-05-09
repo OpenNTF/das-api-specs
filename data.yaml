@@ -540,6 +540,11 @@ definitions:
         type: string
       '@link':
         $ref: '#/definitions/link'
+      '@score':
+        type: integer
+        description: |
+          The search score if this entry is in a search response (systemcolumns
+          bit 0x2000).
     additionalProperties:
       type: object
 
@@ -647,6 +652,9 @@ definitions:
       '@href':
         type: string
         description: The URL of the Document resource.
+      '@score':
+        type: integer
+        description: The search score if this entry is in a search response.
         
   documentListResponse:
     type: array
