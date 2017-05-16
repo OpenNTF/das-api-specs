@@ -44,6 +44,8 @@ For example:
   without writing a line of client code.  For deployment instructions, see
   the [Swagger UI on Domino](https://github.com/OpenNTF/das-api-specs/wiki/Swagger-UI-on-Domino)
   article.
+
+For a quick demo of the Swagger tools and DAS, see [REST API Demonstration](https://youtu.be/DMatdeFf2HU) on YouTube.
   
 ## Sample Client Code
 
