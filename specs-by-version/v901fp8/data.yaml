@@ -25,9 +25,9 @@ info:
     JSON format.
     
     **Important**: This version of the OpenAPI spec (**data.yaml**) includes
-    data API changes from Domino 9.0.1 FP9. This includes optional new query
+    data API changes from Domino 9.0.1 FP8. This includes optional new query
     parameters for some operations.  If you are using a version of Domino before
-    9.0.1 FP9, consider using an earlier version of the spec.
+    9.0.1 FP8, consider using an earlier version of the spec.
 
 securityDefinitions:
   basic:
@@ -52,8 +52,6 @@ tags:
     description: Create, read, update or delete a document.
   - name: document list
     description: Read a list of documents in a database.
-  - name: attachment
-    description: Read an attachment.
 
 paths:
   /api/data:
@@ -305,7 +303,6 @@ paths:
         - $ref: '#/parameters/lowerCaseFieldsParam'
         - $ref: '#/parameters/fieldsParam'
         - $ref: '#/parameters/markReadParam'
-        - $ref: '#/parameters/attachmentLinksParam'
         - $ref: '#/parameters/ifModifiedSinceParam'
       responses:
         '200':
@@ -409,21 +406,6 @@ paths:
           description: |
             The document has been modified since the date specified by
             the `If-Unmodified-Since` header.
-
-  /{folder}/{database}/api/data/documents/unid/{docUnid}/{itemName}/{fileName}:
-    get:
-      summary: |
-        Reads an attachment.
-      tags: ['attachment']
-      parameters:
-        - $ref: '#/parameters/folderParam'
-        - $ref: '#/parameters/databaseParam'
-        - $ref: '#/parameters/docUnidParam'
-        - $ref: '#/parameters/itemNameParam'
-        - $ref: '#/parameters/fileNameParam'
-      responses:
-        '200':
-          description: Successful response
 
 # Object definitions
 definitions:
@@ -558,11 +540,6 @@ definitions:
         type: string
       '@link':
         $ref: '#/definitions/link'
-      '@score':
-        type: integer
-        description: |
-          The search score if this entry is in a search response (systemcolumns
-          bit 0x2000).
     additionalProperties:
       type: object
 
@@ -670,9 +647,6 @@ definitions:
       '@href':
         type: string
         description: The URL of the Document resource.
-      '@score':
-        type: integer
-        description: The search score if this entry is in a search response.
         
   documentListResponse:
     type: array
@@ -1003,28 +977,3 @@ parameters:
     type: boolean
     required: false
 
-  attachmentLinksParam:
-    name: attachmentlinks
-    in: query
-    description: |
-      When `true`, the response includes a link to each attachment instead of
-      the attachment data itself.  You can access the attachment as a separate
-      resource.  This parameter (`attachmentlinks=true`) is mutually exclusive
-      with `multipart=false`.
-    type: boolean
-    required: false
-
-  itemNameParam:
-    name: itemName
-    in: path
-    description: Name of the item associated with the attachment.
-    type: string
-    required: true
-
-
-  fileNameParam:
-    name: fileName
-    in: path
-    description: Attachment file name.
-    type: string
-    required: true
