@@ -31,7 +31,7 @@ specification is [freebusy.yaml](freebusy.yaml).
 
 - [data.yaml](data.yaml) changes for Domino 9.0.1 FP9 (22-August-2017)
 - [wiki page](https://github.com/OpenNTF/das-api-specs/wiki/Config-settings-to-disable-individual-DAS-resources) 
-  describing how to disable selected DAS resources (22-August-2017
+  describing how to disable selected DAS resources (22-August-2017)
 
 ## Uses
 
