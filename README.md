@@ -27,6 +27,12 @@ This repository contains OpenAPI specifications for DAS APIs.
 Each API has a separate specification.  For example, the freebusy API 
 specification is [freebusy.yaml](freebusy.yaml).
 
+## Recent Revisions
+
+- [data.yaml](data.yaml) changes for Domino 9.0.1 FP9 (22-August-2017)
+- [wiki page](https://github.com/OpenNTF/das-api-specs/wiki/Config-settings-to-disable-individual-DAS-resources) 
+  describing how to disable selected DAS resources (22-August-2017
+
 ## Uses
 
 You can use these OpenAPI specifications with a broad range of Swagger tools.
