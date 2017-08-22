@@ -235,6 +235,7 @@ public class DocumentTest {
                                 false,  // lowercasefields
                                 null,   // fields filter
                                 true,   // markread
+                                false,  // attachmentlinks
                                 null);  // If-Modified-Since header
             
             if ( document != null ) {
