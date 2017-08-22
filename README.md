@@ -74,8 +74,8 @@ specification:
 
 | Specification     | Domino Version                                                               | Extension Library Version  |
 | ----------------- | ---------------------------------------------------------------------------- | -------------------------- |
-| **calendar.yaml** | [901 - 901FP7](specs-by-version/v901/calendar.yaml), [901FP8](calendar.yaml) | [901v00_17](calendar.yaml) |
-| **data.yaml**     | [901 - 901FP7](specs-by-version/v901/data.yaml), [901FP8](data.yaml)         | [901v00_17](data.yaml)     |
+| **calendar.yaml** | [901 - 901FP7](specs-by-version/v901/calendar.yaml), [901FP8 - 901FP9](calendar.yaml) | [901v00_17](calendar.yaml) |
+| **data.yaml**     | [901 - 901FP7](specs-by-version/v901/data.yaml), [901FP8](specs-by-version/v901fp8/data.yaml), [901FP9](data.yaml) | [901v00_17](data.yaml)     |
 | **freebusy.yaml** | n/a                                                                          | [901v00_17](freebusy.yaml) |
 | **mail.yaml**     | n/a                                                                          | [901v00_17](mail.yaml)     |
 
