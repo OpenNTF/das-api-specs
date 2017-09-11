@@ -21,14 +21,9 @@ info:
   title: IBM Domino Mail API
   version: "9.0.1"
   description: |
-    The mail API provides access to a Domino user's mail data. 
-    The API represents mail messages in both JSON and MIME format.
-    It represents all other mail objects in JSON format.
-   
-    **Important**: This version of the OpenAPI spec (**mail.yaml**) includes
-    mail API changes from version 901v08_01 of the extension library. This includes optional new query
-    parameters for some operations.  If you are using a version of the extension library before
-    901v08_01, consider using an earlier version of the spec.
+   The mail API provides access to a Domino user's mail data. 
+   The API represents mail messages in both JSON and MIME format.
+   It represents all other mail objects in JSON format.
 
 securityDefinitions:
   basic:
@@ -55,12 +50,6 @@ tags:
   description: Create, read, update or delete a delegate
 - name: access
   description: Read the level of access to a mail file
-- name: folder list
-  description: Read the list of folders in a mail file
-- name: folder
-  description: Create, update or delete a folder
-- name: folder messages
-  description: Add or remove messages to/from a folder
   
 # Paths
 paths:
@@ -103,32 +92,6 @@ paths:
           schema:
            $ref: '#/definitions/errorResponse'
 
-    put:
-      tags:
-      - "folder messages"
-      summary: |
-        Adds or removes messages to/from the inbox.
-      parameters:
-        - $ref: '#/parameters/folderParam'
-        - $ref: '#/parameters/databaseParam'
-        -
-          name: operations
-          in: body
-          description: Messages to be added and/or removed.
-          required: true
-          schema:
-            $ref: '#/definitions/folderOperations'
-      # Expected responses for this operation:
-      responses:
-        # Response code
-        200:
-          description: Successful response
-        400:
-          description: |
-           Bad request.  For example, the API could not parse the JSON input.
-          schema:
-           $ref: '#/definitions/errorResponse'
-
   # Message resource
   /{folder}/{database}/api/mail/messages/{unid}:
     get:
@@ -167,7 +130,6 @@ paths:
         - $ref: '#/parameters/folderParam'
         - $ref: '#/parameters/databaseParam'
         - $ref: '#/parameters/unidParam'
-        - $ref: '#/parameters/sendParam'
         -
           name: message
           in: body
@@ -594,192 +556,6 @@ paths:
           schema:
            $ref: '#/definitions/access'
 
-  # Folder list resource
-  /{folder}/{database}/api/mail/folders:
-    get:
-      tags:
-      - "folder list"
-      summary: |
-        Reads the list of folders in the mail file.
-      parameters:
-        - $ref: '#/parameters/folderParam'
-        - $ref: '#/parameters/databaseParam'
-      # Expected responses for this operation:
-      responses:
-        # Response code
-        200:
-          description: Successful response
-          schema:
-           $ref: '#/definitions/folderListResponse'
-
-    post:
-      tags:
-      - "folder"
-      summary: |
-        Creates a folder in the mail file.
-      parameters:
-        - $ref: '#/parameters/folderParam'
-        - $ref: '#/parameters/databaseParam'
-        -
-          name: mailFolder
-          in: body
-          description: The folder to create.
-          required: true
-          schema:
-            $ref: '#/definitions/mailFolder'
-      # Expected responses for this operation:
-      responses:
-        # Response code
-        201:
-          description: Successful response
-          headers:
-            Location:
-              description: |
-                The URL for the new folder.
-              type: string
-        400:
-          description: |
-           Bad request.  For example, the API could not parse the JSON input.
-          schema:
-           $ref: '#/definitions/errorResponse'
-
-  # Folder resource
-  /{folder}/{database}/api/mail/folders/{unid}:
-    get:
-      tags:
-      - "folder"
-      summary: |
-        Reads a folder in the mail file.
-      parameters:
-        - $ref: '#/parameters/folderParam'
-        - $ref: '#/parameters/databaseParam'
-        - $ref: '#/parameters/folderUnidParam'
-      responses:
-        200:
-          description: Successful response
-          schema:
-            $ref: '#/definitions/mailFolder'
-        404:
-          description: |
-           Not found  For example, you specified an invalid folder name.
-          schema:
-           $ref: '#/definitions/errorResponse'
-      
-    put:
-      tags:
-      - "folder"
-      summary: |
-        Updates a folder in the mail file.
-      description: |
-        For example, use this operation to rename or move a folder.
-      parameters:
-        - $ref: '#/parameters/folderParam'
-        - $ref: '#/parameters/databaseParam'
-        - $ref: '#/parameters/folderUnidParam'
-        -
-          name: mailFolder
-          in: body
-          description: The updated folder.
-          required: true
-          schema:
-            $ref: '#/definitions/mailFolder'
-      # Expected responses for this operation:
-      responses:
-        # Response code
-        200:
-          description: Successful response
-        400:
-          description: |
-           Bad request.  For example, the API could not parse the JSON input.
-          schema:
-           $ref: '#/definitions/errorResponse'
-
-    delete:
-      tags:
-      - "folder"
-      summary: Deletes a folder from the mail file.
-      parameters:
-        - $ref: '#/parameters/folderParam'
-        - $ref: '#/parameters/databaseParam'
-        - $ref: '#/parameters/folderUnidParam'
-      # Expected responses for this operation:
-      responses:
-        # Response code
-        200:
-          description: Successful response
-        404:
-          description: |
-           Not found  For example, you specified an invalid folder name.
-          schema:
-           $ref: '#/definitions/errorResponse'
-      
-  # Folder messages resource
-  /{folder}/{database}/api/mail/folders/{unid}/messages:
-    get:
-      tags:
-      - "message list"
-      summary: |
-        Reads a list of messages from a folder.
-      parameters:
-        - $ref: '#/parameters/folderParam'
-        - $ref: '#/parameters/databaseParam'
-        - $ref: '#/parameters/folderUnidParam'
-        - $ref: '#/parameters/startParam'
-        - $ref: '#/parameters/countParam'
-        - $ref: '#/parameters/pageParam'
-        - $ref: '#/parameters/psParam'
-        - $ref: '#/parameters/searchParam'
-        - $ref: '#/parameters/searchmaxdocsParam'
-        - $ref: '#/parameters/sortcolumnParam'
-        - $ref: '#/parameters/sortorderParam'
-        - $ref: '#/parameters/keysParam'
-        - $ref: '#/parameters/keysexactmatchParam'
-      # Expected responses for this operation:
-      responses:
-        # Response code
-        200:
-          description: Successful response
-          schema:
-           $ref: '#/definitions/messageListResponse'
-          headers:
-            Content-Range:
-              description: |
-                Range and number of items in the response. For example, 
-                `items 0-9/29`
-              type: string
-        400:
-          description: |
-           Bad request.  For example, you specified an invalid parameter.
-          schema:
-           $ref: '#/definitions/errorResponse'
-           
-    put:
-      tags:
-      - "folder messages"
-      summary: |
-        Adds or removes messages to/from the folder.
-      parameters:
-        - $ref: '#/parameters/folderParam'
-        - $ref: '#/parameters/databaseParam'
-        - $ref: '#/parameters/folderUnidParam'
-        -
-          name: operations
-          in: body
-          description: Messages to be added and/or removed.
-          required: true
-          schema:
-            $ref: '#/definitions/folderOperations'
-      # Expected responses for this operation:
-      responses:
-        # Response code
-        200:
-          description: Successful response
-        400:
-          description: |
-           Bad request.  For example, the API could not parse the JSON input.
-          schema:
-           $ref: '#/definitions/errorResponse'
-
 # Object definitions
 definitions:
   person:
@@ -812,8 +588,8 @@ definitions:
       read: 
         type: boolean
         description: |
-          `true` if the message has been read; `false` if the message 
-          has not been read.
+          'true' has been read; `false` if the message has not
+          been read.
      
   messageListResponse:
     type: array
@@ -978,52 +754,6 @@ definitions:
           When the type of the `data` property when present.
           For example, "text".
 
-  link:
-    type: object
-    properties:
-      rel:
-        type: string
-        description: Relationship to this resource.
-      href:
-        type: string
-        description: URL to linked resource.
-        
-  mailFolder:
-    type: object
-    properties:
-      href:
-        type: string
-        description: Relative URL of this folder.
-      name:
-        type: string
-        description: Name of this folder.
-      unid:
-        type: string
-        description: The UNID of this folder.
-      links:
-        type: array
-        items:
-          $ref: '#/definitions/link'
-
-  folderListResponse:
-    type: array
-    items:
-      $ref: '#/definitions/mailFolder'
-
-  folderOperations:
-    type: object
-    properties:
-      add:
-        type: array
-        description: Array of UNIDs of documents to add to the folder.
-        items:
-          type: string
-      remove:
-        type: array
-        description: Array of UNIDs of documents to remove from the folder.
-        items:
-          type: string
-          
 # Definitions of common parameters
 parameters:          
   folderParam:
@@ -1044,13 +774,6 @@ parameters:
     name: name
     in: path
     description: Delegate name.
-    required: true
-    type: string
-  
-  folderUnidParam:
-    name: unid
-    in: path
-    description: Mail folder UNID.
     required: true
     type: string
   
@@ -1169,8 +892,7 @@ parameters:
     name: markread
     in: query
     description: |
-      If omitted or `true`, mark the message read.  If `false`, don't
-      mark the message read.
+      If 'true' mark the message read.
     type: boolean
     required: false
 
@@ -1178,17 +900,8 @@ parameters:
     name: permanently
     in: query
     description: |
-      If `true` permanently delete the message.  Otherwise,
+      If 'true' permanently delete the message.  Otherwise,
       the message is moved to the trash.
     type: boolean
     required: false
 
-  sendParam:
-    name: send
-    in: query
-    description: |
-      If `true` send the updated draft message. After the message is
-      sent, it won't be in the Drafts view and cannot be updated 
-      anymore.
-    type: boolean
-    required: false
