@@ -81,10 +81,10 @@ specification:
 
 | Specification     | Domino Version                                                               | Extension Library Version  |
 | ----------------- | ---------------------------------------------------------------------------- | -------------------------- |
-| **calendar.yaml** | [901 - 901FP7](specs-by-version/v901/calendar.yaml), [901FP8 - 901FP9](calendar.yaml) | [901v00_17](calendar.yaml) |
-| **data.yaml**     | [901 - 901FP7](specs-by-version/v901/data.yaml), [901FP8](specs-by-version/v901fp8/data.yaml), [901FP9](data.yaml) | [901v00_17](data.yaml)     |
-| **freebusy.yaml** | n/a                                                                          | [901v00_17](freebusy.yaml) |
-| **mail.yaml**     | n/a                                                                          | [901v00_17](specs-by-version/x901v00_17/mail.yaml), [901v08_01](mail.yaml) |
+| **calendar.yaml** | [901 - 901FP7](specs-by-version/v901/calendar.yaml), [901FP8 - 901FP9](calendar.yaml) | [901v00_17 - 901v09_01](calendar.yaml) |
+| **data.yaml**     | [901 - 901FP7](specs-by-version/v901/data.yaml), [901FP8](specs-by-version/v901fp8/data.yaml), [901FP9](data.yaml) | [901v00_17](specs-by-version/x901v00_17/data.yaml), [901v08_01 - 901v09_01](data.yaml) |
+| **freebusy.yaml** | n/a                                                                          | [901v00_17 - 901v09_01](freebusy.yaml) |
+| **mail.yaml**     | n/a                                                                          | [901v00_17](specs-by-version/x901v00_17/mail.yaml), [901v08_01 - 901v09_01](mail.yaml) |
 
 ## Contributions
 
