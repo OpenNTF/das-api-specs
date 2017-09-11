@@ -26,9 +26,9 @@ info:
     It represents all other mail objects in JSON format.
    
     **Important**: This version of the OpenAPI spec (**mail.yaml**) includes
-    mail API changes from version 901v00_17 of the extension library. This includes optional new query
+    mail API changes from version 901v08_01 of the extension library. This includes optional new query
     parameters for some operations.  If you are using a version of the extension library before
-    901v00_17, consider using an earlier version of the spec.
+    901v08_01, consider using an earlier version of the spec.
 
 securityDefinitions:
   basic:
