@@ -29,6 +29,7 @@ specification is [freebusy.yaml](freebusy.yaml).
 
 ## Recent Revisions
 
+- [mail.yaml](mail.yaml) changes for Extension Library version 901v08_01 (11-September-2015)
 - [data.yaml](data.yaml) changes for Domino 9.0.1 FP9 (22-August-2017)
 - [wiki page](https://github.com/OpenNTF/das-api-specs/wiki/Config-settings-to-disable-individual-DAS-resources) 
   describing how to disable selected DAS resources (22-August-2017)
@@ -83,7 +84,7 @@ specification:
 | **calendar.yaml** | [901 - 901FP7](specs-by-version/v901/calendar.yaml), [901FP8 - 901FP9](calendar.yaml) | [901v00_17](calendar.yaml) |
 | **data.yaml**     | [901 - 901FP7](specs-by-version/v901/data.yaml), [901FP8](specs-by-version/v901fp8/data.yaml), [901FP9](data.yaml) | [901v00_17](data.yaml)     |
 | **freebusy.yaml** | n/a                                                                          | [901v00_17](freebusy.yaml) |
-| **mail.yaml**     | n/a                                                                          | [901v00_17](mail.yaml)     |
+| **mail.yaml**     | n/a                                                                          | [901v00_17](specs-by-version/x901v00_17/mail.yaml), [901v08_01](mail.yaml) |
 
 ## Contributions
 
