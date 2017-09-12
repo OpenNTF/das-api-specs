@@ -61,6 +61,8 @@ tags:
   description: Create, update or delete a folder
 - name: folder messages
   description: Add or remove messages to/from a folder
+- name: attachment
+  description: Read a message attachment
   
 # Paths
 paths:
@@ -142,6 +144,7 @@ paths:
         - $ref: '#/parameters/unidParam'
         - $ref: '#/parameters/formatParam'
         - $ref: '#/parameters/markreadParam'
+        - $ref: '#/parameters/attachmentLinksParam'
       # Expected responses for this operation:
       responses:
         # Response code
@@ -206,6 +209,21 @@ paths:
            Not found.  For example, you specified an invalid UNID.
           schema:
            $ref: '#/definitions/errorResponse'
+
+  # Attachment resource
+  /{folder}/{database}/api/mail/messages/{unid}/attachments/{fileName}:
+    get:
+      summary: |
+        Reads an attachment.
+      tags: ['attachment']
+      parameters:
+        - $ref: '#/parameters/folderParam'
+        - $ref: '#/parameters/databaseParam'
+        - $ref: '#/parameters/unidParam'
+        - $ref: '#/parameters/fileNameParam'
+      responses:
+        '200':
+          description: Successful response
 
   # Outbox resource
   /{folder}/{database}/api/mail/outbox:
@@ -836,6 +854,12 @@ definitions:
         type: string
         description: |
           Transfer encoding of this part -- for example "base64".
+      contentLocation:
+        type: string
+        description: |
+          URL to read the part data.  This property may be present
+          if the part is an attachment.  A part never includes both `data`
+          and `contentLocation`.
       boundary:
         type: string
         description: Boundary of this part.
@@ -1192,3 +1216,21 @@ parameters:
       anymore.
     type: boolean
     required: false
+
+  attachmentLinksParam:
+    name: attachmentlinks
+    in: query
+    description: |
+      When `true`, the response includes a link to each attachment instead of
+      the attachment data itself.  You can access the attachment as a separate
+      resource.  This parameter (`attachmentlinks=true`) is mutually exclusive
+      with `multipart=false`.
+    type: boolean
+    required: false
+
+  fileNameParam:
+    name: fileName
+    in: path
+    description: Attachment file name.
+    type: string
+    required: true
