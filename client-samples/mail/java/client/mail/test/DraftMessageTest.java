@@ -241,7 +241,7 @@ public class DraftMessageTest {
 
             // Send the message
             System.out.println("Reading message " + unid + " from " + folder + "/" + database + " ...");
-            Message message = _messageApi.folderDatabaseApiMailMessagesUnidGet(folder, database, unid, null, null);
+            Message message = _messageApi.folderDatabaseApiMailMessagesUnidGet(folder, database, unid, null, null, false);
             
             if ( message != null ) {
                 
