@@ -79,12 +79,14 @@ versions of the OpenAPI specifications in this repository.
 Currently, this repository includes the following versions of each
 specification:
 
-| Specification     | Domino Version                                                               | Extension Library Version  |
-| ----------------- | ---------------------------------------------------------------------------- | -------------------------- |
-| **calendar.yaml** | [901 - 901FP7](specs-by-version/v901/calendar.yaml), [901FP8 - 901FP9](calendar.yaml) | [901v00_17 - 901v09_01](calendar.yaml) |
-| **data.yaml**     | [901 - 901FP7](specs-by-version/v901/data.yaml), [901FP8](specs-by-version/v901fp8/data.yaml), [901FP9](data.yaml) | [901v00_17](specs-by-version/x901v00_17/data.yaml), [901v08_01 - 901v09_01](data.yaml) |
-| **freebusy.yaml** | n/a                                                                          | [901v00_17 - 901v09_01](freebusy.yaml) |
-| **mail.yaml**     | n/a                                                                          | [901v00_17](specs-by-version/x901v00_17/mail.yaml), [901v08_01 - 901v09_01](mail.yaml) |
+| Release                         | Specifications |
+| ------------------------------- | -------------- |
+| **Domino 9.0.1 - 9.0.1 FP7**    | [calendar.yaml](specs-by-version/v901/calendar.yaml), [data.yaml](specs-by-version/v901/data.yaml) |
+| **Extension Library 901v00_17** | [calendar.yaml](calendar.yaml), [data.yaml](specs-by-version/x901v00_17/data.yaml), [freebusy.yaml](freebusy.yaml), [mail.yaml](specs-by-version/x901v00_17/mail.yaml) |
+| **Domino 9.01 FP8**             | [calendar.yaml](calendar.yaml), [data.yaml](specs-by-version/v901fp8/data.yaml) |
+| **Extension Library 901v08_01** | [calendar.yaml](calendar.yaml), [data.yaml](data.yaml), [freebusy.yaml](freebusy.yaml), [mail.yaml](mail.yaml) |
+| **Domino 9.01 FP9**             | [calendar.yaml](calendar.yaml), [data.yaml](data.yaml) |
+| **Extension Library 901v09_01** | [calendar.yaml](calendar.yaml), [data.yaml](data.yaml), [freebusy.yaml](freebusy.yaml), [mail.yaml](mail.yaml) |
 
 ## Contributions
 
