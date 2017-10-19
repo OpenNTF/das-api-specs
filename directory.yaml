@@ -1,0 +1,178 @@
+#
+# © Copyright IBM Corp. 2017
+# 
+# Licensed under the Apache License, Version 2.0 (the "License"); 
+# you may not use this file except in compliance with the License. 
+# You may obtain a copy of the License at:
+# 
+# http://www.apache.org/licenses/LICENSE-2.0 
+# 
+# Unless required by applicable law or agreed to in writing, software 
+# distributed under the License is distributed on an "AS IS" BASIS, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+# implied. See the License for the specific language governing 
+# permissions and limitations under the License.
+#
+
+swagger: '2.0'
+
+# Document metadata
+info:
+  title: IBM Domino Directory API
+  version: "9.0.1"
+  description: |
+    The directory API provides access to a Domino directory. 
+    The API represents directory objects in JSON format.
+   
+securityDefinitions:
+  basic:
+    type: basic
+
+security:
+  - basic: []
+  
+# Tags
+tags:
+- name: lookup
+  description: Look up names in the directory
+  
+# Paths
+paths:
+  # Lookup resource
+  /api/directory/lookup:
+    get:
+      tags:
+      - "lookup"
+      summary: |
+        Looks up a list of names in the directory.
+      parameters:
+        - $ref: '#/parameters/namesParam'
+        - $ref: '#/parameters/countParam'
+        - $ref: '#/parameters/exactParam'
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          schema:
+           $ref: '#/definitions/lookupResponse'
+        400:
+          description: |
+           Bad request.  For example, you specified an invalid parameter.
+          schema:
+           $ref: '#/definitions/errorResponse'
+
+# Object definitions
+definitions:
+  match:
+    type: object
+    properties:
+      fullName:
+        type: string
+        description: Full name for this match.
+      shortName:
+        type: string
+        description: Short name for this match.
+      type:
+        type: string
+        description: |
+          Type of directory object for this match.  Some possible values
+          are `person`, `group`, `database`, and `certifier`.
+      email:
+        type: string
+        description: Email address for this match.
+      mailServer:
+        type: string
+        description: Home mail server for this match.
+      mailFile:
+        type: string
+        description: Mail file for this match, relative to `mailServer`.
+  
+  lookupResult:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Name for this result.
+      count:
+        type: integer
+        description: Number of matches in this result.
+      available:
+        type: integer
+        description: |
+          Number of matches available in the directory for this name.
+          This may be greater than `count`.  
+      matches:
+        type: array
+        items:
+          $ref: '#/definitions/match'
+        
+  lookupResponse:
+    type: object
+    properties:
+      totalCount:
+        type: integer
+        description: Total number of matches included in this response.
+      totalAvailable:
+        type: integer
+        description: |
+          Total number of matches available in the directory.  This may be
+          greater than `totalCount`
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/lookupResult'
+
+  errorResponse:
+    type: object
+    properties:
+      code:
+        type: integer
+        description: HTTP status code.  For example, 400.
+      text:
+        type: string
+        description: HTTP status text.  For example, "Bad request".
+      message:
+        type: string
+        description: Request specific error message.
+      data:
+        type: string
+        description: |
+          Error specific details.  When present, this may include
+          a server-side stack trace.
+      type:
+        type: string
+        description: |
+          When the type of the `data` property when present.
+          For example, "text".
+
+# Definitions of common parameters
+parameters:          
+  namesParam:
+    name: names
+    in: query
+    description: Comma separated list of names to look up.
+    required: true
+    type: string
+
+  countParam:
+    name: count
+    in: query
+    description: |
+      The maximum number of matches to return for each name.  If omitted,
+      50 is the default value for this parameter.  You may not specify a value
+      less than 0 or greater than 200.  When this value is 0, the API returns
+      the number of matches available for each name, but does not include a
+      `matches` array.
+    required: false
+    type: integer
+
+  exactParam:
+    name: exactmatches
+    in: query
+    description: |
+      When `true`, the API matches each name exactly.  If omitted, the default
+      value is `false`.  In other words, the API returns partial matches.
+    required: false
+    type: boolean
+
