@@ -25,9 +25,9 @@ info:
     JSON format.
     
     **Important**: This version of the OpenAPI spec (**data.yaml**) includes
-    data API changes from the XPages Extension Library release 9.0.1.v09_02. This 
-    includes new operations on attachments, agents and forms.  If you are using
-    a version before 9.0.1.v09_02, consider using an earlier version of the spec.
+    data API changes from Domino 9.0.1 FP9. This includes optional new query
+    parameters for some operations.  If you are using a version of Domino before
+    9.0.1 FP9, consider using an earlier version of the spec.
 
 securityDefinitions:
   basic:
@@ -53,13 +53,7 @@ tags:
   - name: document list
     description: Read a list of documents in a database.
   - name: attachment
-    description: Create, read, update or delete an attachment.
-  - name: agent
-    description: Read or execute a database agent.
-  - name: agent list
-    description: Read a list of agents in a database.
-  - name: form list
-    description: Read a list of forms in a database.
+    description: Read an attachment.
 
 paths:
   /api/data:
@@ -416,27 +410,6 @@ paths:
             The document has been modified since the date specified by
             the `If-Unmodified-Since` header.
 
-  /{folder}/{database}/api/data/documents/unid/{docUnid}/{itemName}:
-    post:
-      summary: |
-        Adds an attachment to an item in a document.
-      tags: ['attachment']
-      consumes: ['multipart/form-data']
-      parameters:
-        - $ref: '#/parameters/folderParam'
-        - $ref: '#/parameters/databaseParam'
-        - $ref: '#/parameters/docUnidParam'
-        - $ref: '#/parameters/itemNameParam'
-        -
-          name: file
-          description: File contents
-          in: formData
-          required: true
-          type: file
-      responses:
-        '201':
-          description: Successful response
-
   /{folder}/{database}/api/data/documents/unid/{docUnid}/{itemName}/{fileName}:
     get:
       summary: |
@@ -451,115 +424,6 @@ paths:
       responses:
         '200':
           description: Successful response
-
-    put:
-      summary: |
-        Updates an attachment.
-      tags: ['attachment']
-      consumes: ['application/octet-stream']
-      parameters:
-        - $ref: '#/parameters/folderParam'
-        - $ref: '#/parameters/databaseParam'
-        - $ref: '#/parameters/docUnidParam'
-        - $ref: '#/parameters/itemNameParam'
-        - $ref: '#/parameters/fileNameParam'
-        -
-          name: file
-          description: File contents
-          in: body
-          required: true
-          schema:
-            type: string
-            format: binary
-      responses:
-        '200':
-          description: Successful response
-
-    delete:
-      summary: |
-        Deletes an attachment.
-      tags: ['attachment']
-      parameters:
-        - $ref: '#/parameters/folderParam'
-        - $ref: '#/parameters/databaseParam'
-        - $ref: '#/parameters/docUnidParam'
-        - $ref: '#/parameters/itemNameParam'
-        - $ref: '#/parameters/fileNameParam'
-      responses:
-        '200':
-          description: Successful response
-
-  /{folder}/{database}/api/data/agents:
-    get:
-      summary: |
-        Reads a list of agents.
-      tags: ['agent list']
-      parameters:
-        - $ref: '#/parameters/folderParam'
-        - $ref: '#/parameters/databaseParam'
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            $ref: '#/definitions/agentListResponse'
-
-  /{folder}/{database}/api/data/agents/{agentName}:
-    get:
-      summary: |
-        Reads a list of agents.
-      tags: ['agent']
-      parameters:
-        - $ref: '#/parameters/folderParam'
-        - $ref: '#/parameters/databaseParam'
-        - $ref: '#/parameters/agentNameParam'
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            $ref: '#/definitions/agent'
-        '404':
-          description: The specified agent wasn't found.
-
-  /{folder}/{database}/api/data/agentjobs:
-    post:
-      summary: |
-        Executes an agent.
-      tags: ['agent']
-      parameters:
-        - $ref: '#/parameters/folderParam'
-        - $ref: '#/parameters/databaseParam'
-        -
-          name: agentJob
-          in: body
-          description: The agent job to execute.
-          required: true
-          schema:
-            $ref: '#/definitions/agentJob'
-      responses:
-        '201':
-          description: Successful response
-        '400':
-          description: |
-            Bad request. For example, the server couldn't find
-            the specified agent.
-        '409':
-          description: |
-            Conflict. For example, the agent has already been
-            executed within the minimum run interval.
-
-  /{folder}/{database}/api/data/forms:
-    get:
-      summary: |
-        Reads a list of forms.
-      tags: ['form list']
-      parameters:
-        - $ref: '#/parameters/folderParam'
-        - $ref: '#/parameters/databaseParam'
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            $ref: '#/definitions/formListResponse'
 
 # Object definitions
 definitions:
@@ -815,81 +679,6 @@ definitions:
     items:
       $ref: '#/definitions/documentListEntry'
       
-  agent:
-    type: object
-    properties:
-      'name':
-        type: string
-        description: The name of the agent.
-      'href':
-        type: string
-        description: The URL of the agent resource.
-      'trigger':
-        type: string
-        description: The agent trigger.
-      'target':
-        type: string
-        description: The agent target (if applicable).
-      'enabled':
-        type: boolean
-        description: |
-          `true` if the agent is enabled.
-      'lastRun':
-        type: string
-        description: The date and time the agent was last executed.
-      'serverName':
-        type: string
-        description: The name of the server on which the agent was last executed.
-
-  agentListResponse:
-    type: object
-    properties:
-      'agents':
-        type: array
-        items:
-          $ref: '#/definitions/agent'
-          
-  agentJob:
-    type: object
-    properties:
-      'agentName':
-        type: string
-        description: The name of the agent to execute.
-      'synchronous':
-        type: boolean
-        description: |
-          `true` to execute the agent synchronously.
-      'documentUnid':
-        type: string
-        description: Optional UNID of a target document.
-      'minRunInterval':
-        type: integer
-        description: Optional minimum run interval in seconds.
-
-  form:
-    type: object
-    properties:
-      'name':
-        type: string
-        description: The name of the form.
-      'subform':
-        type: boolean
-        description: |
-          `true` if the form is a subform.
-      'aliases':
-        type: array
-        description: A list of aliases for the form.
-        items:
-          type: string
-      
-  formListResponse:
-    type: object
-    properties:
-      'forms':
-        type: array
-        items:
-          $ref: '#/definitions/form'
-          
 # Common parameters
 parameters:
   folderParam:
@@ -1237,12 +1026,5 @@ parameters:
     name: fileName
     in: path
     description: Attachment file name.
-    type: string
-    required: true
-
-  agentNameParam:
-    name: agentName
-    in: path
-    description: Name of an agent in the database.
     type: string
     required: true
