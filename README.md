@@ -29,7 +29,9 @@ specification is [freebusy.yaml](freebusy.yaml).
 
 ## Recent Revisions
 
-- [mail.yaml](mail.yaml) changes for Extension Library version 901v08_01 (11-September-2015)
+- [data.yaml](data.yaml) changes for Extension Library version 901v08_01.  Also added
+  [directory.yaml](directory.yaml) spec for new directory API. (5-November-2017)
+- [mail.yaml](mail.yaml) changes for Extension Library version 901v08_01 (11-September-2017)
 - [data.yaml](data.yaml) changes for Domino 9.0.1 FP9 (22-August-2017)
 - [wiki page](https://github.com/OpenNTF/das-api-specs/wiki/Config-settings-to-disable-individual-DAS-resources) 
   describing how to disable selected DAS resources (22-August-2017)
@@ -84,9 +86,10 @@ specification:
 | **Domino 9.0.1 - 9.0.1 FP7**    | [calendar.yaml](specs-by-version/v901/calendar.yaml), [data.yaml](specs-by-version/v901/data.yaml) |
 | **Extension Library 901v00_17** | [calendar.yaml](calendar.yaml), [data.yaml](specs-by-version/x901v00_17/data.yaml), [freebusy.yaml](freebusy.yaml), [mail.yaml](specs-by-version/x901v00_17/mail.yaml) |
 | **Domino 9.01 FP8**             | [calendar.yaml](calendar.yaml), [data.yaml](specs-by-version/v901fp8/data.yaml) |
-| **Extension Library 901v08_01** | [calendar.yaml](calendar.yaml), [data.yaml](data.yaml), [freebusy.yaml](freebusy.yaml), [mail.yaml](mail.yaml) |
-| **Domino 9.01 FP9**             | [calendar.yaml](calendar.yaml), [data.yaml](data.yaml) |
-| **Extension Library 901v09_01** | [calendar.yaml](calendar.yaml), [data.yaml](data.yaml), [freebusy.yaml](freebusy.yaml), [mail.yaml](mail.yaml) |
+| **Extension Library 901v08_01** | [calendar.yaml](calendar.yaml), [data.yaml](specs-by-version/v901fp9/data.yaml), [freebusy.yaml](freebusy.yaml), [mail.yaml](mail.yaml) |
+| **Domino 9.01 FP9**             | [calendar.yaml](calendar.yaml), [data.yaml](specs-by-version/v901fp9/data.yaml) |
+| **Extension Library 901v09_01** | [calendar.yaml](calendar.yaml), [data.yaml](specs-by-version/v901fp9/data.yaml), [freebusy.yaml](freebusy.yaml), [mail.yaml](mail.yaml) |
+| **Extension Library 901v09_02** | [calendar.yaml](calendar.yaml), [data.yaml](data.yaml), [directory.yaml](directory.yaml), [freebusy.yaml](freebusy.yaml), [mail.yaml](mail.yaml) |
 
 ## Contributions
 
